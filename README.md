@@ -1,12 +1,26 @@
 
 # KinectCamV2
+
+
+## Code history
 Original code is from Piotr Sowa:
   * http://codingbytodesign.net/2014/07/20/kinectcamv2-for-kinect-v2/
   * http://codingbytodesign.net/2015/02/08/coding-by-to-design-of-kinectcamv2/
+Modified by David Obando
+  * https://github.com/DavidObando/KinectCamV2
 
-The code is functional with Kinect for Xbox One and the v2 SDK, but it hasn't been sanitized as of this commit. However, the project has been cleaned to not mess with your file system.
+Looks like original code may have been borowed from 
+Maxim Kartavenkov post which pre-dates Piotrs code with ~2 years.
+* https://www.codeproject.com/Articles/437617/DirectShow-Virtual-Video-Capture-Source-Filter-in
 
-Also, make sure you enable Windows Hello with your Kinect. It works perfectly! https://channel9.msdn.com/coding4fun/kinect/Windows-Hello-with-the-Kinect-v2
+# OBS
+This fork focuses on making Kinect v2 usable with OBS. Issues with OBS has been solved, and CPU usage has been dropped to near nothing.
+The functionality for mirror, zoom and face tracking has been disabled because it was using a lot of CPU (~8% on my computer).
+
+Currently only tested on 32-bit OBS, but compile should work for both 32-bit and 64-bit.
+
+# Other
+Currently registers as a 32-bit webcamera. Should work with any webcam compatible app.
 
 ## Skype for Business
 Also from http://codingbytodesign.net/2014/07/20/kinectcamv2-for-kinect-v2/:
