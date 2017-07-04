@@ -5,7 +5,7 @@
 This fork focuses on making Kinect v2 usable with OBS. Issues with OBS has been solved, and CPU usage has been dropped to near nothing.
 The functionality for mirror, zoom and face tracking has been disabled because it was using a lot of CPU (~8% on my computer).
 
-Currently only tested on 32-bit OBS, but compile should work for both 32-bit and 64-bit.
+Only tested on 32-bit OBS, but compile should work for both 32-bit and 64-bit.
 
 # Other
 Currently registers as a 32-bit webcamera. Should work with any webcam compatible app.
