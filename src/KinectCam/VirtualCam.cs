@@ -590,7 +590,7 @@ namespace KinectCam
 
         private const int c_iDefaultWidth = 1920;
         private const int c_iDefaultHeight = 1080;
-        private const int c_nDefaultBitCount = 24;
+        private const int c_nDefaultBitCount = 32;
         private const int c_iDefaultFPS = 30;
         private const int c_iFormatsCount = 8;
         private const int c_nGranularityW = 160;
@@ -624,7 +624,7 @@ namespace KinectCam
         #region Constructor
 
         public VirtualCamFilter()
-            : base("Kinect Camera V2")
+            : base("Tedds Kinect Camera V2")
         {
             m_bmi.bmiHeader = new BitmapInfoHeader();
             AddPin(new VirtualCamStream("Capture", this));
@@ -864,7 +864,7 @@ namespace KinectCam
 
             if (!KinectCamSettigns.Default.Desktop)
             {
-                KinectHelper.GenerateFrame(_ptr, length, KinectCamSettigns.Default.Mirrored,KinectCamSettigns.Default.Zoom);
+                KinectHelper.GenerateFrame(_ptr, length, m_nHeight,m_nWidth,m_nBitCount, KinectCamSettigns.Default.Mirrored,KinectCamSettigns.Default.Zoom);
             }
             else
             {
