@@ -290,17 +290,17 @@ namespace KinectCam
         }
         static unsafe void DepthFrameReady(DepthFrame frame)
         {
-            if (!pinnedColorFrameSet)
+            if (!pinnedDepthFrameSet)
             {
                 sensorDepthFrameData = new ushort[frame.FrameDescription.LengthInPixels];
                 pinnedDepthFrameLength = frame.FrameDescription.LengthInPixels * frame.FrameDescription.BytesPerPixel;
                 pinnedDepthFrame = GCHandle.Alloc(sensorDepthFrameData, GCHandleType.Pinned);
-                pinnedColorFrameSet = true;
+                pinnedDepthFrameSet = true;
 
                 sensorDepthSpacePoints = new DepthSpacePoint[sensorDepthFrameData.Length];
                 pinnedDepthSpaceLength = (uint)sensorDepthSpacePoints.Length;
                 pinnedDepthSpacePoints = GCHandle.Alloc(sensorDepthSpacePoints, GCHandleType.Pinned);
-                pinnedColorSpaceSet = true;
+                pinnedDepthSpaceSet = true;
             }
 
             frame.CopyFrameDataToIntPtr(pinnedDepthFrame.AddrOfPinnedObject(), pinnedDepthFrameLength);
@@ -371,7 +371,7 @@ namespace KinectCam
         private static DepthSpacePoint[] sensorDepthSpacePoints;
         private static uint pinnedDepthSpaceLength;
         private static GCHandle pinnedDepthSpacePoints;
-        private static bool pinnedColorSpaceSet = false;
+        private static bool pinnedDepthSpaceSet = false;
 
 
         [DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]

@@ -39,35 +39,6 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\AnyCPU\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <PlatformTarget>x86</PlatformTarget>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\AnyCPU\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <PlatformTarget>x86</PlatformTarget>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
@@ -79,6 +50,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -91,6 +63,31 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Kinect, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -195,21 +192,35 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>c:\Windows\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe /unregister /nologo "$(TargetDir)BaseClassesNET.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
-c:\Windows\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe /unregister /nologo "$(TargetDir)KinectCam.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
+    <PreBuildEvent>%25windir%25\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe /unregister /nologo "$(TargetDir)BaseClassesNET.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
+%25windir%25\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe /unregister /nologo "$(TargetDir)KinectCam.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
 
-c:\Windows\Microsoft.NET\Framework\v4.0.30319\ngen.exe uninstall "$(TargetDir)BaseClassesNET.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
-c:\Windows\Microsoft.NET\Framework\v4.0.30319\ngen.exe uninstall "$(TargetDir)KinectCam.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
+%25windir%25\Microsoft.NET\Framework\v4.0.30319\ngen.exe uninstall "$(TargetDir)BaseClassesNET.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
+%25windir%25\Microsoft.NET\Framework\v4.0.30319\ngen.exe uninstall "$(TargetDir)KinectCam.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
+
+%25windir%25\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe /unregister /nologo "$(TargetDir)BaseClassesNET.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
+%25windir%25\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe /unregister /nologo "$(TargetDir)KinectCam.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
+
+%25windir%25\Microsoft.NET\Framework64\v4.0.30319\ngen.exe uninstall "$(TargetDir)BaseClassesNET.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
+%25windir%25\Microsoft.NET\Framework64\v4.0.30319\ngen.exe uninstall "$(TargetDir)KinectCam.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
+
 
 exit 0</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>
-c:\Windows\Microsoft.NET\Framework\v4.0.30319\ngen.exe install "$(TargetDir)BaseClassesNET.dll"
-c:\Windows\Microsoft.NET\Framework\v4.0.30319\ngen.exe install "$(TargetDir)KinectCam.dll"
+if $(SolutionName) == x86 %25windir%25\Microsoft.NET\Framework\v4.0.30319\ngen.exe install "$(TargetDir)BaseClassesNET.dll"
+if $(SolutionName) == x86 %25windir%25\Microsoft.NET\Framework\v4.0.30319\ngen.exe install "$(TargetDir)KinectCam.dll"
 
-c:\Windows\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe /nologo "$(TargetDir)BaseClassesNET.dll"
-c:\Windows\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe "$(TargetDir)KinectCam.dll" /nologo /codebase /tlb: KinectCam.tlb
+if $(SolutionName) == x86 %25windir%25\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe /nologo "$(TargetDir)BaseClassesNET.dll"
+if $(SolutionName) == x86 %25windir%25\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe "$(TargetDir)KinectCam.dll" /nologo /codebase /tlb: KinectCam.tlb
+
+
+if $(SolutionName) == x64 %25windir%25\Microsoft.NET\Framework64\v4.0.30319\ngen.exe install "$(TargetDir)BaseClassesNET.dll"
+if $(SolutionName) == x64 %25windir%25\Microsoft.NET\Framework64\v4.0.30319\ngen.exe install "$(TargetDir)KinectCam.dll"
+
+if $(SolutionName) == x64 %25windir%25\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe /nologo "$(TargetDir)BaseClassesNET.dll"
+if $(SolutionName) == x64 %25windir%25\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe "$(TargetDir)KinectCam.dll" /nologo /codebase /tlb: KinectCam.tlb
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
