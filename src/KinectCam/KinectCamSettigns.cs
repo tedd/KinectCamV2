@@ -19,20 +19,20 @@
         public bool Mirrored
         {
             get;
-			set;
-		}
+            set;
+        }
 
-		public bool Zoom
-		{
-			get;
-			set;
-		}
-		public bool TrackHead
-		{
-			get;
-			set;
-		}
-		public bool Desktop
+        public bool Zoom
+        {
+            get;
+            set;
+        }
+        public bool TrackHead
+        {
+            get;
+            set;
+        }
+        public bool Desktop
         {
             get;
             set;

@@ -12,11 +12,11 @@ namespace KinectCam
     [ComVisible(false)]
     public class VirtualCamStream : SourceStream
                         , IAMStreamControl
-						, IKsPropertySet
-						, IAMPushSource
+                        , IKsPropertySet
+                        , IAMPushSource
                         , IAMLatency
-						, IAMStreamConfig
-						, IAMBufferNegotiation
+                        , IAMStreamConfig
+                        , IAMBufferNegotiation
     {
 
         #region Constants
@@ -30,7 +30,7 @@ namespace KinectCam
 
         protected object m_csPinLock = new object();
         protected object m_csTimeLock = new object();
-	    protected long m_rtStart = 0;
+        protected long m_rtStart = 0;
         protected long m_rtStreamOffset = 0;
         protected long m_rtStreamOffsetMax = -1;
         protected long m_rtStartAt = -1;
@@ -42,13 +42,13 @@ namespace KinectCam
         protected bool m_bStopNotified = false;
         protected AllocatorProperties m_pProperties = null;
         protected IReferenceClockImpl m_pClock = null;
-	    // Clock Token
+        // Clock Token
         protected int m_dwAdviseToken = 0;
-	    // Clock Semaphore
+        // Clock Semaphore
         protected Semaphore m_hSemaphore = null;
-	    // Clock Start time
+        // Clock Start time
         protected long m_rtClockStart = 0;
-	    // Clock Stop time
+        // Clock Stop time
         protected long m_rtClockStop = 0;
         private bool m_isActive;
 
@@ -61,7 +61,7 @@ namespace KinectCam
         {
             m_mt.majorType = Guid.Empty;
 
-            GetMediaType(0,ref m_mt);
+            GetMediaType(0, ref m_mt);
         }
 
         #endregion
@@ -90,7 +90,7 @@ namespace KinectCam
 
         public override int GetMediaType(int iPosition, ref AMMediaType pMediaType)
         {
-            return (m_Filter as VirtualCamFilter).GetMediaType(iPosition,ref pMediaType);
+            return (m_Filter as VirtualCamFilter).GetMediaType(iPosition, ref pMediaType);
         }
 
         public override int DecideBufferSize(ref IMemAllocatorImpl pAlloc, ref AllocatorProperties pProperties)
@@ -104,7 +104,7 @@ namespace KinectCam
                 hr = (HRESULT)pAlloc.SetProperties(pProperties, Actual);
                 if (SUCCEEDED(hr))
                 {
-                    pProperties.cbAlign  = Actual.cbAlign;
+                    pProperties.cbAlign = Actual.cbAlign;
                     pProperties.cbBuffer = Actual.cbBuffer;
                     pProperties.cbPrefix = Actual.cbPrefix;
                     pProperties.cBuffers = Actual.cBuffers;
@@ -129,7 +129,7 @@ namespace KinectCam
                     m_hSemaphore = new Semaphore(0, 0x7FFFFFFF);
                     m_isActive = true;
                 }
-            }            
+            }
             return base.Active();
         }
 
@@ -151,7 +151,7 @@ namespace KinectCam
                     m_hSemaphore.Close();
                     m_hSemaphore = null;
                 }
-            }            
+            }
             return hr;
         }
 
@@ -210,7 +210,7 @@ namespace KinectCam
 
                 m_pClock.GetTime(out m_rtClockStop);
                 _sample.GetTime(out _start, out _stop);
-                
+
                 if (rtLatency > 0 && rtLatency * 3 < m_rtClockStop - m_rtClockStart)
                 {
                     m_rtClockStop = m_rtClockStart + rtLatency;
@@ -420,7 +420,7 @@ namespace KinectCam
             lock (m_csPinLock)
             {
                 m_rtStreamOffset = rtOffset;
-                if (m_rtStreamOffset > m_rtStreamOffsetMax) m_rtStreamOffsetMax = m_rtStreamOffset;                
+                if (m_rtStreamOffset > m_rtStreamOffsetMax) m_rtStreamOffsetMax = m_rtStreamOffset;
             }
             return NOERROR;
         }
@@ -516,7 +516,7 @@ namespace KinectCam
                     m_dwStartCookie = 0;
                 }
             }
-	        return NOERROR;
+            return NOERROR;
         }
 
         public int StopAt(DsLong ptStop, bool bSendExtra, int dwCookie)
@@ -536,53 +536,53 @@ namespace KinectCam
                     m_dwStopCookie = 0;
                 }
             }
-	        return NOERROR;
+            return NOERROR;
         }
 
         public int GetInfo(out AMStreamInfo pInfo)
         {
-            lock(m_csPinLock)
+            lock (m_csPinLock)
             {
-	            pInfo = new AMStreamInfo();
+                pInfo = new AMStreamInfo();
                 pInfo.dwFlags = AMStreamInfoFlags.None;
 
-	            if (m_rtStart < m_rtStartAt)
-	            {
+                if (m_rtStart < m_rtStartAt)
+                {
                     pInfo.dwFlags = pInfo.dwFlags | AMStreamInfoFlags.Discarding;
-	            }
-	            if (m_rtStartAt != -1)
-	            {
-                    pInfo.dwFlags       = pInfo.dwFlags | AMStreamInfoFlags.StartDefined;
-		            pInfo.tStart		= m_rtStartAt;
-		            pInfo.dwStartCookie	= m_dwStartCookie;
-	            }
-	            if (m_rtStopAt != -1)
-	            {
-                    pInfo.dwFlags       = pInfo.dwFlags | AMStreamInfoFlags.StopDefined;
-		            pInfo.tStop			= m_rtStopAt;
-		            pInfo.dwStopCookie	= m_dwStopCookie;
-	            }
-                if (m_bShouldFlush) pInfo.dwFlags = pInfo.dwFlags |  AMStreamInfoFlags.StopSendExtra;
+                }
+                if (m_rtStartAt != -1)
+                {
+                    pInfo.dwFlags = pInfo.dwFlags | AMStreamInfoFlags.StartDefined;
+                    pInfo.tStart = m_rtStartAt;
+                    pInfo.dwStartCookie = m_dwStartCookie;
+                }
+                if (m_rtStopAt != -1)
+                {
+                    pInfo.dwFlags = pInfo.dwFlags | AMStreamInfoFlags.StopDefined;
+                    pInfo.tStop = m_rtStopAt;
+                    pInfo.dwStopCookie = m_dwStopCookie;
+                }
+                if (m_bShouldFlush) pInfo.dwFlags = pInfo.dwFlags | AMStreamInfoFlags.StopSendExtra;
             }
-	        return NOERROR;
+            return NOERROR;
         }
 
         #endregion
-    
+
         #region IAMLatency Members
 
-        public int  GetLatency(out long prtLatency)
+        public int GetLatency(out long prtLatency)
         {
             return (m_Filter as VirtualCamFilter).GetLatency(out prtLatency);
         }
 
         #endregion
     }
-    
+
 
     [ComVisible(true)]
     [Guid("E48ECF1A-A5E7-4EB0-8BF7-E15185D66FA4")]
-    [AMovieSetup(Merit.Normal,AMovieSetup.CLSID_VideoInputDeviceCategory)]
+    [AMovieSetup(Merit.Normal, AMovieSetup.CLSID_VideoInputDeviceCategory)]
     [PropPageSetup(typeof(AboutForm))]
     public class VirtualCamFilter : BaseSourceFilter, IAMFilterMiscFlags
     {
@@ -644,9 +644,9 @@ namespace KinectCam
             if (m_State == FilterState.Stopped)
             {
                 m_hScreenDC = CreateDC("DISPLAY", null, null, IntPtr.Zero);
-                m_nMaxWidth = GetDeviceCaps(m_hScreenDC,8); // HORZRES
+                m_nMaxWidth = GetDeviceCaps(m_hScreenDC, 8); // HORZRES
                 m_nMaxHeight = GetDeviceCaps(m_hScreenDC, 10); // VERTRES
-                m_hMemDC    = CreateCompatibleDC(m_hScreenDC);
+                m_hMemDC = CreateCompatibleDC(m_hScreenDC);
                 m_hBitmap = CreateCompatibleBitmap(m_hScreenDC, m_nWidth, Math.Abs(m_nHeight));
             }
             return base.Pause();
@@ -688,8 +688,8 @@ namespace KinectCam
             }
             if (
                     pmt.subType != MediaSubType.RGB24
-                &&  pmt.subType != MediaSubType.RGB32
-                &&  pmt.subType != MediaSubType.ARGB32
+                && pmt.subType != MediaSubType.RGB32
+                && pmt.subType != MediaSubType.ARGB32
                 )
             {
                 return VFW_E_INVALIDMEDIATYPE;
@@ -864,7 +864,7 @@ namespace KinectCam
 
             if (!KinectCamSettigns.Default.Desktop)
             {
-                KinectHelper.GenerateFrame(_ptr, length, m_nHeight,m_nWidth,m_nBitCount, KinectCamSettigns.Default.Mirrored,KinectCamSettigns.Default.Zoom);
+                KinectHelper.GenerateFrame(_ptr, length, m_nHeight, m_nWidth, m_nBitCount, KinectCamSettigns.Default.Mirrored, KinectCamSettigns.Default.Zoom);
             }
             else
             {
@@ -917,7 +917,7 @@ namespace KinectCam
             return NOERROR;
         }
 
-        public int GetStreamCaps(int iIndex,out AMMediaType ppmt, out VideoStreamConfigCaps _caps)
+        public int GetStreamCaps(int iIndex, out AMMediaType ppmt, out VideoStreamConfigCaps _caps)
         {
             ppmt = null;
             _caps = null;

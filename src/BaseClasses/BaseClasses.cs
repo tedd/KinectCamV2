@@ -72,19 +72,19 @@ namespace DirectShow.BaseClasses
         }
 
         public AMovieSetup(bool _register)
-            :this()
+            : this()
         {
             m_bShouldRegister = _register;
         }
 
         public AMovieSetup(string _name)
-            :this()
+            : this()
         {
             m_sName = _name;
         }
 
         public AMovieSetup(Merit _merit)
-            :this()
+            : this()
         {
             m_Merit = _merit;
         }
@@ -167,7 +167,7 @@ namespace DirectShow.BaseClasses
         }
 
         public PropPageSetup(string _guid1, string _guid2, string _guid3)
-            :this(_guid1,_guid2)
+            : this(_guid1, _guid2)
         {
             m_Guids.Add(new Guid(_guid3));
         }
@@ -183,8 +183,8 @@ namespace DirectShow.BaseClasses
             m_Guids.Add(_type2.GUID);
         }
 
-        public PropPageSetup(Type _type1,Type _type2,Type _type3)
-            :this(_type1,_type2)
+        public PropPageSetup(Type _type1, Type _type2, Type _type3)
+            : this(_type1, _type2)
         {
             m_Guids.Add(_type3.GUID);
         }
@@ -224,7 +224,7 @@ namespace DirectShow.BaseClasses
             m_sExtension = _extension;
         }
 
-        public RegisterFileExtension(string _extension,string _MediaType,string _SubType)
+        public RegisterFileExtension(string _extension, string _MediaType, string _SubType)
             : this(_extension)
         {
             if (!String.IsNullOrEmpty(_MediaType))
@@ -264,7 +264,7 @@ namespace DirectShow.BaseClasses
     #region Protocol Register Attribute
 
     [ComVisible(false)]
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple=true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class RegisterProtocolExtension : Attribute
     {
         #region Variables
@@ -333,7 +333,7 @@ namespace DirectShow.BaseClasses
         #region Constructor
 
         public RegisterMediaType(string _subtype, string _sequence)
-            : this(null,null,_subtype, _sequence)
+            : this(null, null, _subtype, _sequence)
         {
 
         }
@@ -541,9 +541,9 @@ namespace DirectShow.BaseClasses
             }
             else
                 if (cPins > 1)
-                {
-                    return E_INVALIDARG;
-                }
+            {
+                return E_INVALIDARG;
+            }
             if (IsOutOfSync())
             {
                 OnReset();
@@ -623,9 +623,9 @@ namespace DirectShow.BaseClasses
             }
             else
                 if (cMediaTypes > 1)
-                {
-                    return E_INVALIDARG;
-                }
+            {
+                return E_INVALIDARG;
+            }
             if (IsOutOfSync())
             {
                 OnReset();
@@ -650,7 +650,7 @@ namespace DirectShow.BaseClasses
                 }
                 Marshal.StructureToPtr(mt, _pmt, true);
                 Marshal.WriteIntPtr(ppMediaTypes, _count * Marshal.SizeOf(typeof(IntPtr)), _pmt);
-                
+
                 _count++;
                 cMediaTypes--;
             }
@@ -686,7 +686,7 @@ namespace DirectShow.BaseClasses
 
         #endregion
     };
-    
+
     #endregion
 
     #region Base Prop Page Support
@@ -804,7 +804,7 @@ namespace DirectShow.BaseClasses
 
         public IQualityControl QualitySync
         {
-            get 
+            get
             {
                 if (m_QualitySink != IntPtr.Zero)
                 {
@@ -825,7 +825,7 @@ namespace DirectShow.BaseClasses
         public IntPtr AllocatorPtr
         {
             get { return m_pAllocator; }
-            set 
+            set
             {
                 if (m_pAllocator != IntPtr.Zero) Marshal.Release(m_pAllocator);
                 m_pAllocator = value;
@@ -890,7 +890,7 @@ namespace DirectShow.BaseClasses
         public AMMediaType CurrentMediaType
         {
             get { return m_mt; }
-            set { AMMediaType.Copy(value,ref m_mt); }
+            set { AMMediaType.Copy(value, ref m_mt); }
         }
 
         #endregion
@@ -992,7 +992,7 @@ namespace DirectShow.BaseClasses
         #endregion
 
         #region Protected Methods
-        
+
         protected virtual int DisconnectInternal()
         {
             if (m_ConnectedPin != IntPtr.Zero)
@@ -1087,7 +1087,7 @@ namespace DirectShow.BaseClasses
                     IntPtr _ptr = Marshal.GetIUnknownForObject(this);
                     Guid _guid = typeof(IPin).GUID;
                     IntPtr _this;
-                    Marshal.QueryInterface(_ptr, ref _guid,out _this);
+                    Marshal.QueryInterface(_ptr, ref _guid, out _this);
                     Marshal.Release(_ptr);
 
                     try
@@ -1142,7 +1142,7 @@ namespace DirectShow.BaseClasses
             IntPtr pTypes = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(IntPtr)));
             try
             {
-                for (; ; )
+                for (;;)
                 {
                     hr = pEnum.Next(1, pTypes, ulMediaCount);
                     if (hr != S_OK)
@@ -1218,13 +1218,13 @@ namespace DirectShow.BaseClasses
 
         public virtual int ConnectionMediaType(AMMediaType pmt)
         {
-            
+
             if (((object)pmt) == null) return E_POINTER;
             lock (m_Lock)
             {
                 if (IsConnected)
                 {
-                    AMMediaType.Copy(m_mt,ref pmt);
+                    AMMediaType.Copy(m_mt, ref pmt);
                     return S_OK;
                 }
                 else
@@ -1237,7 +1237,7 @@ namespace DirectShow.BaseClasses
 
         public virtual int ReceiveConnection(IntPtr pReceivePin, AMMediaType pmt)
         {
-            
+
             if (pReceivePin == IntPtr.Zero || pmt == null) return E_POINTER;
             lock (m_Lock)
             {
@@ -1314,7 +1314,7 @@ namespace DirectShow.BaseClasses
 
         public virtual int Disconnect()
         {
-            
+
             lock (m_Lock)
             {
                 if (!IsStopped)
@@ -1327,7 +1327,7 @@ namespace DirectShow.BaseClasses
 
         public virtual int ConnectedTo(out IntPtr ppPin)
         {
-            
+
             ppPin = m_ConnectedPin;
             if (ppPin != IntPtr.Zero)
             {
@@ -1338,7 +1338,7 @@ namespace DirectShow.BaseClasses
 
         public virtual int QueryPinInfo(out PinInfo pInfo)
         {
-            
+
             pInfo = new PinInfo();
             pInfo.name = m_sName;
             pInfo.dir = m_Direction;
@@ -1353,7 +1353,7 @@ namespace DirectShow.BaseClasses
 
         public virtual int QueryAccept(AMMediaType pmt)
         {
-            
+
             if (pmt == null) return E_POINTER;
 
             int hr = CheckMediaType(pmt);
@@ -1375,21 +1375,21 @@ namespace DirectShow.BaseClasses
 
         public virtual int QueryDirection(out PinDirection pPinDir)
         {
-            
+
             pPinDir = m_Direction;
             return S_OK;
         }
 
         public virtual int QueryId(out string Id)
         {
-            
+
             Id = m_sName;
             return NOERROR;
         }
 
         public virtual int QueryInternalConnections(IntPtr ppPins, ref int nPin)
         {
-            
+
             nPin = 0;
             return E_NOTIMPL;
         }
@@ -1398,7 +1398,7 @@ namespace DirectShow.BaseClasses
         {
             int hr = S_OK;
             EnumMediaTypes _enum = new EnumMediaTypes(this);
-            ppEnum = Marshal.GetComInterfaceForObject(_enum,typeof(IEnumMediaTypes));
+            ppEnum = Marshal.GetComInterfaceForObject(_enum, typeof(IEnumMediaTypes));
             return hr;
         }
 
@@ -1456,7 +1456,7 @@ namespace DirectShow.BaseClasses
             if (FAILED(hr)) return hr;
 
             ISeekingPassThruImpl _seek = new ISeekingPassThruImpl(ppPassThru);
-            hr = (HRESULT)_seek.Init(bRenderer,pPin);
+            hr = (HRESULT)_seek.Init(bRenderer, pPin);
             if (FAILED(hr))
             {
                 Marshal.Release(ppPassThru);
@@ -1524,15 +1524,15 @@ namespace DirectShow.BaseClasses
 
         public AMSample2Properties SampleProps
         {
-            get 
-            { 
+            get
+            {
                 ASSERT(m_SampleProps.cbData != 0);
                 return m_SampleProps;
             }
         }
 
         #endregion
-        
+
         #region Constructor
 
         public BaseInputPin(string _name, BaseFilter _filter)
@@ -1543,7 +1543,7 @@ namespace DirectShow.BaseClasses
 
         ~BaseInputPin()
         {
-            
+
         }
 
         #endregion
@@ -1675,7 +1675,7 @@ namespace DirectShow.BaseClasses
             }
             Guid _guid = typeof(IMediaSample2).GUID;
             IntPtr pSample2;
-            if (S_OK == _sample._QueryInterface(ref _guid,out pSample2))
+            if (S_OK == _sample._QueryInterface(ref _guid, out pSample2))
             {
                 IMediaSample2Impl _sample2 = new IMediaSample2Impl(pSample2);
                 IntPtr pStructure = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(AMSample2Properties)));
@@ -1755,7 +1755,7 @@ namespace DirectShow.BaseClasses
 
         public virtual int GetAllocator(out IntPtr ppAllocator)
         {
-            
+
             lock (m_Lock)
             {
                 ppAllocator = IntPtr.Zero;
@@ -1776,7 +1776,7 @@ namespace DirectShow.BaseClasses
 
         public virtual int NotifyAllocator(IntPtr pAllocator, bool bReadOnly)
         {
-            
+
             if (pAllocator == IntPtr.Zero) return E_POINTER;
             lock (m_Lock)
             {
@@ -1799,7 +1799,7 @@ namespace DirectShow.BaseClasses
 
         public virtual int GetAllocatorRequirements(AllocatorProperties pProps)
         {
-            
+
             return E_NOTIMPL;
         }
 
@@ -1829,7 +1829,7 @@ namespace DirectShow.BaseClasses
 
         public virtual int ReceiveCanBlock()
         {
-            
+
             int cOutputPins = 0;
             for (int i = 0; i < m_Filter.Pins.Count; i++)
             {
@@ -1895,7 +1895,7 @@ namespace DirectShow.BaseClasses
 
         public IMemInputPinImpl InputPin
         {
-            get 
+            get
             {
                 return new IMemInputPinImpl(m_pInputPin);
             }
@@ -1951,7 +1951,7 @@ namespace DirectShow.BaseClasses
 
         public override int BreakConnect()
         {
-            
+
             if (m_pAllocator != IntPtr.Zero)
             {
                 int hr = Allocator.Decommit();
@@ -1972,7 +1972,7 @@ namespace DirectShow.BaseClasses
 
         public override int CheckConnect(ref IPinImpl _pin)
         {
-            
+
             int hr = base.CheckConnect(ref _pin);
             if (FAILED(hr))
             {
@@ -1989,7 +1989,7 @@ namespace DirectShow.BaseClasses
 
         public override int CompleteConnect(ref IPinImpl pReceivePin)
         {
-            
+
             return DecideAllocator(InputPin, out m_pAllocator);
         }
 
@@ -2005,13 +2005,13 @@ namespace DirectShow.BaseClasses
 
         public virtual int InitAllocator(out IntPtr ppAlloc)
         {
-            
+
             return CreateMemoryAllocator(out ppAlloc);
         }
 
         public virtual int DecideAllocator(IMemInputPinImpl pPin, out IntPtr ppAlloc)
         {
-            
+
             int hr = NOERROR;
             ppAlloc = IntPtr.Zero;
             AllocatorProperties prop = new AllocatorProperties();
@@ -2023,7 +2023,7 @@ namespace DirectShow.BaseClasses
             {
                 prop.cbAlign = 1;
             }
-            
+
             hr = pPin.GetAllocator(out ppAlloc);
             if (SUCCEEDED(hr))
             {
@@ -2044,7 +2044,7 @@ namespace DirectShow.BaseClasses
                 Marshal.Release(ppAlloc);
                 ppAlloc = IntPtr.Zero;
             }
-            
+
             hr = InitAllocator(out ppAlloc);
 
             if (SUCCEEDED(hr))
@@ -2105,7 +2105,7 @@ namespace DirectShow.BaseClasses
             }
             return InputPin.Receive(pSample);
         }
-        
+
         public virtual int DeliverEndOfStream()
         {
             if (m_ConnectedPin == IntPtr.Zero)
@@ -2222,7 +2222,7 @@ namespace DirectShow.BaseClasses
 
         public List<BasePin> Pins
         {
-            get 
+            get
             {
                 if (m_Pins == null)
                 {
@@ -2241,24 +2241,25 @@ namespace DirectShow.BaseClasses
 
         public IFilterGraph FilterGraph
         {
-            get { 
+            get
+            {
                 if (m_pGraph == IntPtr.Zero) return null;
-                return (IFilterGraph)Marshal.GetObjectForIUnknown(m_pGraph); 
+                return (IFilterGraph)Marshal.GetObjectForIUnknown(m_pGraph);
             }
         }
 
         public IMediaEventSink Sink
         {
-            get 
+            get
             {
                 if (m_pGraph == IntPtr.Zero) return null;
-                return (IMediaEventSink)Marshal.GetObjectForIUnknown(m_pGraph); 
+                return (IMediaEventSink)Marshal.GetObjectForIUnknown(m_pGraph);
             }
         }
 
         public bool IsActive
         {
-            get 
+            get
             {
                 lock (m_Lock)
                 {
@@ -2279,8 +2280,9 @@ namespace DirectShow.BaseClasses
 
         public IReferenceClockImpl Clock
         {
-            get {
-                return new IReferenceClockImpl(m_pClock); 
+            get
+            {
+                return new IReferenceClockImpl(m_pClock);
             }
         }
 
@@ -2289,7 +2291,7 @@ namespace DirectShow.BaseClasses
         #region Constructor
 
         public BaseFilter(string _name)
-            : this(_name,new object())
+            : this(_name, new object())
         {
 
         }
@@ -2324,7 +2326,7 @@ namespace DirectShow.BaseClasses
 
         public int AddPin(BasePin _pin)
         {
-            lock ( m_Lock )
+            lock (m_Lock)
             {
                 Pins.Add(_pin);
             }
@@ -2373,7 +2375,7 @@ namespace DirectShow.BaseClasses
             return ReconnectPin((IPin)Marshal.GetObjectForIUnknown(pPin), pmt);
         }
 
-        public virtual int ReconnectPin(IPin pPin,AMMediaType pmt)
+        public virtual int ReconnectPin(IPin pPin, AMMediaType pmt)
         {
             if (m_pGraph != null)
             {
@@ -2724,7 +2726,7 @@ namespace DirectShow.BaseClasses
             return NOERROR;
         }
 
-        protected virtual long SizeMax() 
+        protected virtual long SizeMax()
         {
             long _size = 0;
             MemoryStream _stream = new MemoryStream();
@@ -2758,7 +2760,7 @@ namespace DirectShow.BaseClasses
 
         #region Registry Helper Functions
 
-        protected object GetFilterRegistryValue(string _name,object _default)
+        protected object GetFilterRegistryValue(string _name, object _default)
         {
             if (!string.IsNullOrEmpty(_name))
             {
@@ -2785,7 +2787,7 @@ namespace DirectShow.BaseClasses
             return _default;
         }
 
-        protected bool SetFilterRegistryValue(string _name,object _value)
+        protected bool SetFilterRegistryValue(string _name, object _value)
         {
             if (!string.IsNullOrEmpty(_name))
             {
@@ -2817,12 +2819,12 @@ namespace DirectShow.BaseClasses
 
         #region Setup Helper Methods
 
-        protected virtual int BeforeInstall(ref RegFilter2 _reginfo,ref IFilterMapper2 _mapper2)
+        protected virtual int BeforeInstall(ref RegFilter2 _reginfo, ref IFilterMapper2 _mapper2)
         {
             return NOERROR;
         }
 
-        protected virtual int AfterInstall(HRESULT hr,ref RegFilter2 _reginfo, ref IFilterMapper2 _mapper2)
+        protected virtual int AfterInstall(HRESULT hr, ref RegFilter2 _reginfo, ref IFilterMapper2 _mapper2)
         {
             return NOERROR;
         }
@@ -2939,7 +2941,7 @@ namespace DirectShow.BaseClasses
 
                             hr = _mapper2.UnregisterFilter(_category, _instance, _type.GUID);
 
-                            hr = _filter.AfterUninstall((HRESULT)hr,ref _mapper2);
+                            hr = _filter.AfterUninstall((HRESULT)hr, ref _mapper2);
                             ASSERT(SUCCEEDED(hr));
                             _mapper2 = null;
                         }
@@ -2968,7 +2970,7 @@ namespace DirectShow.BaseClasses
                 }
             }
         }
-        
+
         #endregion
     }
 
@@ -2996,7 +2998,7 @@ namespace DirectShow.BaseClasses
 
         public override int CheckConnect(ref IPinImpl _pin)
         {
-            
+
             int hr = ((TransformFilter)m_Filter).CheckConnect(PinDirection.Input, ref _pin);
             if (FAILED(hr))
             {
@@ -3007,7 +3009,7 @@ namespace DirectShow.BaseClasses
 
         public override int BreakConnect()
         {
-            
+
             ASSERT(IsStopped);
             ((TransformFilter)m_Filter).BreakConnect(PinDirection.Input);
             return base.BreakConnect();
@@ -3015,7 +3017,7 @@ namespace DirectShow.BaseClasses
 
         public override int CompleteConnect(ref IPinImpl pReceivePin)
         {
-            
+
             int hr = ((TransformFilter)m_Filter).CompleteConnect(PinDirection.Input, ref pReceivePin);
             if (FAILED(hr))
             {
@@ -3026,7 +3028,7 @@ namespace DirectShow.BaseClasses
 
         public override int CheckMediaType(AMMediaType mt)
         {
-            
+
             int hr = ((TransformFilter)m_Filter).CheckInputType(mt);
             if (S_OK != hr)
             {
@@ -3099,7 +3101,7 @@ namespace DirectShow.BaseClasses
                 {
                     hr = ((TransformFilter)m_Filter).OnReceive(ref _sample);
                 }
-                
+
                 return hr;
             }
 
@@ -3606,33 +3608,33 @@ namespace DirectShow.BaseClasses
                 }
                 else
                     if (Input == null || !Input.IsConnected)
+                {
+                    if (Output != null && !m_bEOSDelivered)
                     {
-                        if (Output != null && !m_bEOSDelivered)
-                        {
-                            Output.DeliverEndOfStream();
-                            m_bEOSDelivered = true;
-                        }
-                        m_State = FilterState.Paused;
+                        Output.DeliverEndOfStream();
+                        m_bEOSDelivered = true;
                     }
-                    else
+                    m_State = FilterState.Paused;
+                }
+                else
                         if (!Output.IsConnected)
+                {
+                    m_State = FilterState.Paused;
+                }
+                else
+                {
+                    if (m_State == FilterState.Stopped)
+                    {
+                        lock (m_csReceive)
                         {
-                            m_State = FilterState.Paused;
+                            hr = StartStreaming();
                         }
-                        else
-                        {
-                            if (m_State == FilterState.Stopped)
-                            {
-                                lock (m_csReceive)
-                                {
-                                    hr = StartStreaming();
-                                }
-                            }
-                            if (SUCCEEDED(hr))
-                            {
-                                hr = base.Pause();
-                            }
-                        }
+                    }
+                    if (SUCCEEDED(hr))
+                    {
+                        hr = base.Pause();
+                    }
+                }
 
                 m_bSampleSkipped = false;
                 m_bQualityChanged = false;
@@ -3992,34 +3994,34 @@ namespace DirectShow.BaseClasses
                     }
                     else
                         if (SUCCEEDED(hr))
+                    {
+                        //  Must copy so set the allocator properties on the output
+                        AllocatorProperties Props = new AllocatorProperties(), Actual = new AllocatorProperties();
+
+                        hr = ((IMemAllocator)Marshal.GetObjectForIUnknown(pAllocator)).GetProperties(Props);
+                        GC.Collect();
+                        if (SUCCEEDED(hr))
                         {
-                            //  Must copy so set the allocator properties on the output
-                            AllocatorProperties Props = new AllocatorProperties(), Actual = new AllocatorProperties();
-
-                            hr = ((IMemAllocator)Marshal.GetObjectForIUnknown(pAllocator)).GetProperties(Props);
+                            hr = ((IMemAllocator)Marshal.GetObjectForIUnknown(pOutputAllocator)).SetProperties(Props, Actual);
                             GC.Collect();
-                            if (SUCCEEDED(hr))
+                        }
+                        if (SUCCEEDED(hr))
+                        {
+                            if ((Props.cBuffers > Actual.cBuffers)
+                               || (Props.cbBuffer > Actual.cbBuffer)
+                               || (Props.cbAlign > Actual.cbAlign)
+                               )
                             {
-                                hr = ((IMemAllocator)Marshal.GetObjectForIUnknown(pOutputAllocator)).SetProperties(Props, Actual);
-                                GC.Collect();
-                            }
-                            if (SUCCEEDED(hr))
-                            {
-                                if ((Props.cBuffers > Actual.cBuffers)
-                                   || (Props.cbBuffer > Actual.cbBuffer)
-                                   || (Props.cbAlign > Actual.cbAlign)
-                                   )
-                                {
-                                    hr = E_FAIL;
-                                }
-                            }
-
-                            //  Set the allocator on the output pin
-                            if (SUCCEEDED(hr))
-                            {
-                                hr = ((TransInPlaceFilter)m_Filter).Output.InputPin.NotifyAllocator(pOutputAllocator, false);
+                                hr = E_FAIL;
                             }
                         }
+
+                        //  Set the allocator on the output pin
+                        if (SUCCEEDED(hr))
+                        {
+                            hr = ((TransInPlaceFilter)m_Filter).Output.InputPin.NotifyAllocator(pOutputAllocator, false);
+                        }
+                    }
                 }
                 else
                 {
@@ -4404,33 +4406,33 @@ namespace DirectShow.BaseClasses
                 }
             }
 
-                m_bSampleSkipped = false;
+            m_bSampleSkipped = false;
 
-                // Copy the sample media times
-                long TimeStart, TimeEnd;
-                if (pSource.GetMediaTime(out TimeStart, out TimeEnd) == NOERROR)
+            // Copy the sample media times
+            long TimeStart, TimeEnd;
+            if (pSource.GetMediaTime(out TimeStart, out TimeEnd) == NOERROR)
+            {
+                pDest.SetMediaTime((DsLong)TimeStart, (DsLong)TimeEnd);
+            }
+
+            {
+                int lDataLength = pSource.GetActualDataLength();
+                pDest.SetActualDataLength(lDataLength);
+                // Copy the sample data
                 {
-                    pDest.SetMediaTime((DsLong)TimeStart, (DsLong)TimeEnd);
+                    IntPtr pSourceBuffer, pDestBuffer;
+                    int lSourceSize = pSource.GetSize();
+                    int lDestSize = pDest.GetSize();
+
+                    ASSERT(lDestSize >= lSourceSize && lDestSize >= lDataLength);
+
+                    pSource.GetPointer(out pSourceBuffer);
+                    pDest.GetPointer(out pDestBuffer);
+                    ASSERT(lDestSize == 0 || pSourceBuffer != IntPtr.Zero && pDestBuffer != IntPtr.Zero);
+
+                    API.CopyMemory(pDestBuffer, pSourceBuffer, lDataLength);
                 }
-
-                {
-                    int lDataLength = pSource.GetActualDataLength();
-                    pDest.SetActualDataLength(lDataLength);
-                    // Copy the sample data
-                    {
-                        IntPtr pSourceBuffer, pDestBuffer;
-                        int lSourceSize = pSource.GetSize();
-                        int lDestSize = pDest.GetSize();
-
-                        ASSERT(lDestSize >= lSourceSize && lDestSize >= lDataLength);
-
-                        pSource.GetPointer(out pSourceBuffer);
-                        pDest.GetPointer(out pDestBuffer);
-                        ASSERT(lDestSize == 0 || pSourceBuffer != IntPtr.Zero && pDestBuffer != IntPtr.Zero);
-
-                        API.CopyMemory(pDestBuffer, pSourceBuffer, lDataLength);
-                    }
-                }
+            }
 
             return hr;
         }
@@ -4676,7 +4678,7 @@ namespace DirectShow.BaseClasses
 
         public bool CheckRequest(ref int pParam)
         {
-            if (!m_EventSend.WaitOne(0,false))
+            if (!m_EventSend.WaitOne(0, false))
             {
                 return false;
             }
@@ -5003,7 +5005,7 @@ namespace DirectShow.BaseClasses
                 while (!CheckRequest(ref com))
                 {
                     IntPtr pSample;
-                    
+
                     DsLong _start = new DsLong(0), _stop = new DsLong(0);
 
                     int hr = GetDeliveryBuffer(out pSample, _start, _stop, AMGBF.NoWait);
@@ -5210,11 +5212,11 @@ namespace DirectShow.BaseClasses
     [SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode = true)]
     [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
     [ClassInterface(ClassInterfaceType.None)]
-    public class OutputQueue : COMHelper,IDisposable
+    public class OutputQueue : COMHelper, IDisposable
     {
         #region Constants
 
-        protected enum PacketType: int
+        protected enum PacketType : int
         {
             Sample = 0,
             NewSegment = 1,
@@ -5243,13 +5245,13 @@ namespace DirectShow.BaseClasses
                 Data = IntPtr.Zero;
             }
 
-            public Packet(PacketType _type,IntPtr _data)
+            public Packet(PacketType _type, IntPtr _data)
                 : this(_type)
             {
                 Data = _data;
             }
 
-            public Packet(long _start,long _stop,double _rate)
+            public Packet(long _start, long _stop, double _rate)
                 : this(PacketType.NewSegment)
             {
                 NewSegmentPacket _data = new NewSegmentPacket();
@@ -5258,7 +5260,7 @@ namespace DirectShow.BaseClasses
                 _data.dRate = _rate;
 
                 Data = Marshal.AllocCoTaskMem(Marshal.SizeOf(_data));
-                Marshal.StructureToPtr(_data,Data,true);
+                Marshal.StructureToPtr(_data, Data, true);
             }
 
             ~Packet()
@@ -5311,14 +5313,14 @@ namespace DirectShow.BaseClasses
 
         public HRESULT LastResult
         {
-            get 
-            { 
+            get
+            {
                 HRESULT hr;
                 lock (m_csLastResult)
                 {
                     hr = m_hr;
                 }
-                return hr; 
+                return hr;
             }
         }
 
@@ -5330,7 +5332,8 @@ namespace DirectShow.BaseClasses
         public EventWaitHandle PopEvent
         {
             get { return m_hEventPop; }
-            set {
+            set
+            {
                 lock (m_csPopLock)
                 {
                     m_hEventPop = value;
@@ -5345,7 +5348,7 @@ namespace DirectShow.BaseClasses
         public void BeginFlush()
         {
             bool bNotify = false;
-            if (!m_Flushing.WaitOne(0,false))
+            if (!m_Flushing.WaitOne(0, false))
             {
                 m_Flushing.Set();
                 bNotify = true;
@@ -5360,7 +5363,7 @@ namespace DirectShow.BaseClasses
         public void EndFlush()
         {
             bool bNotify = false;
-            if (m_Flushing.WaitOne(0,false))
+            if (m_Flushing.WaitOne(0, false))
             {
                 if (0 == WaitHandle.WaitAny(new WaitHandle[] { m_Flushed, m_evShutdown }))
                 {
@@ -5393,7 +5396,7 @@ namespace DirectShow.BaseClasses
         public int Receive(IntPtr pSample)
         {
             if (pSample == IntPtr.Zero) return E_POINTER;
-            if (m_Flushing.WaitOne(0,false)) return S_FALSE;
+            if (m_Flushing.WaitOne(0, false)) return S_FALSE;
             lock (m_csLastResult)
             {
                 if (m_hr != S_OK) return m_hr;
@@ -5401,7 +5404,7 @@ namespace DirectShow.BaseClasses
             lock (m_csPacketsLock)
             {
                 Marshal.AddRef(pSample);
-                m_Packets.Enqueue(new Packet(PacketType.Sample,pSample));
+                m_Packets.Enqueue(new Packet(PacketType.Sample, pSample));
                 m_evReady.Set();
             }
             return S_OK;
@@ -5414,7 +5417,7 @@ namespace DirectShow.BaseClasses
 
         public void Reset()
         {
-            if (!m_Flushing.WaitOne(0,false))
+            if (!m_Flushing.WaitOne(0, false))
             {
                 lock (m_csPacketsLock)
                 {
@@ -5422,7 +5425,7 @@ namespace DirectShow.BaseClasses
                     m_evReady.Set();
                 }
                 m_Flushing.Set();
-                WaitHandle.WaitAny(new WaitHandle[] { m_Flushed, m_evShutdown});
+                WaitHandle.WaitAny(new WaitHandle[] { m_Flushed, m_evShutdown });
             }
             m_Flushed.Reset();
             m_Flushing.Reset();
@@ -5438,13 +5441,13 @@ namespace DirectShow.BaseClasses
 
         public bool IsIdle()
         {
-            return !m_evReady.WaitOne(0,false);
+            return !m_evReady.WaitOne(0, false);
         }
 
         #endregion
 
         #region Protected Methods
- 
+
         protected virtual void ThreadProc()
         {
             Guid _guid = typeof(IMemInputPin).GUID;
@@ -5472,7 +5475,7 @@ namespace DirectShow.BaseClasses
                     break;
                 }
                 bool bReset;
-                bool bFlushing = m_Flushing.WaitOne(0,false);
+                bool bFlushing = m_Flushing.WaitOne(0, false);
                 lock (m_csPacketsLock)
                 {
                     bReset = m_bReset;
@@ -5543,12 +5546,12 @@ namespace DirectShow.BaseClasses
         }
 
         #endregion
-    
+
         #region IDisposable Members
 
-        public void  Dispose()
+        public void Dispose()
         {
- 	        m_evShutdown.Set();
+            m_evShutdown.Set();
             m_Thread.Dispose();
         }
 
@@ -5598,7 +5601,8 @@ namespace DirectShow.BaseClasses
         public bool Dirty
         {
             get { return m_bDirty; }
-            set {
+            set
+            {
                 if (m_bDirty != value)
                 {
                     m_bDirty = value;
@@ -5872,8 +5876,8 @@ namespace DirectShow.BaseClasses
             int y,
             [MarshalAs(UnmanagedType.LPWStr)] string lpszCaption,
             int cObjects,
-            [MarshalAs(UnmanagedType.Interface, ArraySubType = UnmanagedType.IUnknown)] 
-			ref object ppUnk,
+            [MarshalAs(UnmanagedType.Interface, ArraySubType = UnmanagedType.IUnknown)]
+            ref object ppUnk,
             int cPages,
             IntPtr lpPageClsID,
             int lcid,
@@ -5935,7 +5939,7 @@ namespace DirectShow.BaseClasses
 
         protected IMediaSeekingImpl Seeking
         {
-            get 
+            get
             {
                 lock (m_csLock)
                 {
@@ -6779,7 +6783,7 @@ namespace DirectShow.BaseClasses
 
         public bool IsReady
         {
-            get { return m_evComplete.WaitOne(0,false); }
+            get { return m_evComplete.WaitOne(0, false); }
         }
 
         public FilterState RealState
@@ -6812,7 +6816,7 @@ namespace DirectShow.BaseClasses
                     lock (m_Lock)
                     {
                         HRESULT hr = NOERROR;
-                        IntPtr _pin = Marshal.GetComInterfaceForObject(InputPin,typeof(IPin));
+                        IntPtr _pin = Marshal.GetComInterfaceForObject(InputPin, typeof(IPin));
                         m_pPosition = new RendererPosPassThru(ref hr, _pin);
                         Marshal.Release(_pin);
                         if (FAILED(hr))
@@ -7204,7 +7208,7 @@ namespace DirectShow.BaseClasses
 
                     if ((m_bStreaming == true) && (ScheduleSample(ref pMediaSample) == false))
                     {
-                        ASSERT(m_RenderEvent.WaitOne(0,false) == false);
+                        ASSERT(m_RenderEvent.WaitOne(0, false) == false);
                         ASSERT(CancelNotification() == S_FALSE);
                         m_evClear.Set();
                         return VFW_E_SAMPLE_REJECTED;
@@ -7279,7 +7283,7 @@ namespace DirectShow.BaseClasses
             OnWaitStart();
             while (Result == WaitHandle.WaitTimeout)
             {
-                Result = WaitHandle.WaitAny(WaitObjects, RENDER_TIMEOUT,false);
+                Result = WaitHandle.WaitAny(WaitObjects, RENDER_TIMEOUT, false);
             }
             OnWaitEnd();
 
@@ -7356,7 +7360,7 @@ namespace DirectShow.BaseClasses
 
             ASSERT(m_dwAdvise == 0);
             ASSERT(m_pClock != IntPtr.Zero);
-            ASSERT(m_RenderEvent.WaitOne(0,false) == false);
+            ASSERT(m_RenderEvent.WaitOne(0, false) == false);
 
 
             // We do have a valid reference clock interface so we can ask it to
@@ -7471,7 +7475,7 @@ namespace DirectShow.BaseClasses
                 OnStartStreaming();
 
                 // There should be no outstanding advise
-                ASSERT(m_RenderEvent.WaitOne(0,false) == false);
+                ASSERT(m_RenderEvent.WaitOne(0, false) == false);
                 ASSERT(CancelNotification() == S_FALSE);
 
                 // If we have an EOS and no data then deliver it now
@@ -7610,7 +7614,7 @@ namespace DirectShow.BaseClasses
 
                 // There should be no outstanding clock advise
                 ASSERT(CancelNotification() == S_FALSE);
-                ASSERT(m_RenderEvent.WaitOne(0,false) == false);
+                ASSERT(m_RenderEvent.WaitOne(0, false) == false);
                 ASSERT(m_EndOfStreamTimer == null);
 
                 Ready();
@@ -7675,7 +7679,7 @@ namespace DirectShow.BaseClasses
 
                 // There should be no outstanding advise
                 ASSERT(CancelNotification() == S_FALSE);
-                ASSERT(m_RenderEvent.WaitOne(0,false) == false);
+                ASSERT(m_RenderEvent.WaitOne(0, false) == false);
                 ASSERT(m_EndOfStreamTimer == null);
                 ASSERT(InputPin.IsFlushing == false);
 
@@ -7734,7 +7738,7 @@ namespace DirectShow.BaseClasses
 
                 // There should be no outstanding advise
                 ASSERT(CancelNotification() == S_FALSE);
-                ASSERT(m_RenderEvent.WaitOne(0,false) == false);
+                ASSERT(m_RenderEvent.WaitOne(0, false) == false);
                 ASSERT(m_EndOfStreamTimer == null);
                 ASSERT(InputPin.IsFlushing == false);
 
@@ -7789,7 +7793,7 @@ namespace DirectShow.BaseClasses
                     m_MessageDispatcher.Dispose();
                     m_MessageDispatcher = null;
                 }
-                if (!m_evComplete.WaitOne(0,false))
+                if (!m_evComplete.WaitOne(0, false))
                 {
                     lock (m_Lock)
                     {
@@ -7817,7 +7821,7 @@ namespace DirectShow.BaseClasses
                 hWaitObjects[1] = hEvent;
             }
 
-            return WaitHandle.WaitAny(hWaitObjects,dwWait,false) != WaitHandle.WaitTimeout;
+            return WaitHandle.WaitAny(hWaitObjects, dwWait, false) != WaitHandle.WaitTimeout;
         }
 
         public void Ready()
@@ -7920,7 +7924,7 @@ namespace DirectShow.BaseClasses
             WaitHandle.WaitAny(new WaitHandle[] { m_evClear, m_evAbort });
             lock (m_RendererLock)
             {
-                if (m_evAbort.WaitOne(0,false))
+                if (m_evAbort.WaitOne(0, false))
                 {
                     CancelNotification();
                     ClearPendingSample();
@@ -8930,7 +8934,7 @@ namespace DirectShow.BaseClasses
 
     [ComVisible(false)]
     [ClassInterface(ClassInterfaceType.None)]
-    public class PacketData: IDisposable
+    public class PacketData : IDisposable
     {
         #region Variables
 
@@ -8967,7 +8971,7 @@ namespace DirectShow.BaseClasses
 
     [ComVisible(false)]
     [ClassInterface(ClassInterfaceType.None)]
-    public class PacketsQueue: IDisposable
+    public class PacketsQueue : IDisposable
     {
         #region Variales
 
@@ -9000,7 +9004,7 @@ namespace DirectShow.BaseClasses
 
         public long Duration
         {
-            get 
+            get
             {
                 if (m_rtQueueStop != -1 && m_rtQueueStart != -1)
                 {
@@ -9014,7 +9018,7 @@ namespace DirectShow.BaseClasses
         public long CacheDuration
         {
             get { return m_rtCacheDuration; }
-            set 
+            set
             {
                 m_rtCacheDuration = value;
                 if (m_rtCacheDuration > 0)
@@ -9037,7 +9041,7 @@ namespace DirectShow.BaseClasses
 
         public long StartTime
         {
-            get 
+            get
             {
                 if (m_rtQueueStart == -1)
                 {
@@ -9049,7 +9053,7 @@ namespace DirectShow.BaseClasses
 
         public long StopTime
         {
-            get 
+            get
             {
                 return m_rtQueueStop != -1 ? m_rtQueueStop : 0;
             }
@@ -9063,7 +9067,7 @@ namespace DirectShow.BaseClasses
 
         public bool IsFull
         {
-            get { return !m_evNotFull.WaitOne(0,false); }
+            get { return !m_evNotFull.WaitOne(0, false); }
         }
 
         public bool IsEmpty
@@ -9073,7 +9077,7 @@ namespace DirectShow.BaseClasses
 
         public int Count
         {
-            get 
+            get
             {
                 lock (m_csLock)
                 {
@@ -9258,7 +9262,7 @@ namespace DirectShow.BaseClasses
     [SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode = true)]
     [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
     [ClassInterface(ClassInterfaceType.None)]
-    public abstract class DemuxTrack : COMHelper,IDisposable
+    public abstract class DemuxTrack : COMHelper, IDisposable
     {
         #region Enums
 
@@ -9296,7 +9300,7 @@ namespace DirectShow.BaseClasses
 
         #region Constructor
 
-        protected DemuxTrack(FileParser _parser,TrackType _type)
+        protected DemuxTrack(FileParser _parser, TrackType _type)
         {
             m_pParser = _parser;
             m_Type = _type;
@@ -9384,9 +9388,9 @@ namespace DirectShow.BaseClasses
 
         public bool IsWaiting
         {
-            get { return !m_evReady.WaitOne(0,false) && IsEOS; }
+            get { return !m_evReady.WaitOne(0, false) && IsEOS; }
         }
-        
+
         public EventWaitHandle FlushEvent
         {
             get { return m_hFlush; }
@@ -9395,7 +9399,7 @@ namespace DirectShow.BaseClasses
 
         public bool IsEOS
         {
-            get { return m_bActive && m_pParser.EOSEvent.WaitOne(0,false) && m_Queue.IsEmpty; }
+            get { return m_bActive && m_pParser.EOSEvent.WaitOne(0, false) && m_Queue.IsEmpty; }
         }
 
         #endregion
@@ -9477,7 +9481,7 @@ namespace DirectShow.BaseClasses
 
         #region Basic Methods For Override
 
-        public virtual HRESULT GetTrackAllocatorRequirements(ref int plBufferSize,ref short pwBuffers)
+        public virtual HRESULT GetTrackAllocatorRequirements(ref int plBufferSize, ref short pwBuffers)
         {
             return S_FALSE;
         }
@@ -9550,7 +9554,7 @@ namespace DirectShow.BaseClasses
             return NOERROR;
         }
 
-        protected virtual int FillSampleBuffer(IntPtr pBuffer,int _size,ref PacketData _packet)
+        protected virtual int FillSampleBuffer(IntPtr pBuffer, int _size, ref PacketData _packet)
         {
             int _readed = 0;
             if (_packet.Buffer != null)
@@ -9561,7 +9565,7 @@ namespace DirectShow.BaseClasses
             else
             {
                 byte[] _buffer = new byte[_packet.Size];
-                m_pParser.Stream.ReadData(_packet.Position,_buffer,_packet.Size,out _readed);
+                m_pParser.Stream.ReadData(_packet.Position, _buffer, _packet.Size, out _readed);
                 if (_readed > 0)
                 {
                     Marshal.Copy(_buffer, 0, pBuffer, _readed);
@@ -9574,7 +9578,7 @@ namespace DirectShow.BaseClasses
 
         #region Abstract Methods
 
-	    public abstract HRESULT GetMediaType(int iPosition, ref AMMediaType pmt);
+        public abstract HRESULT GetMediaType(int iPosition, ref AMMediaType pmt);
 
         #endregion
 
@@ -9582,7 +9586,7 @@ namespace DirectShow.BaseClasses
 
         public virtual void Dispose()
         {
-            
+
         }
 
         #endregion
@@ -9592,17 +9596,17 @@ namespace DirectShow.BaseClasses
     [SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode = true)]
     [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
     [ClassInterface(ClassInterfaceType.None)]
-    public abstract class FileParser : COMHelper,IDisposable
+    public abstract class FileParser : COMHelper, IDisposable
     {
         #region Variables
 
-        protected BitStreamReader   m_Stream = null;
-        protected List<DemuxTrack>	m_Tracks = new List<DemuxTrack>();
-	    protected long	            m_rtDuration = 0;
-	    protected EventWaitHandle	m_hQuit = null;
-        protected EventWaitHandle   m_hEOS = null;
-	    private bool				m_bRequireDemuxThread = false;
-        protected string            m_sFileName = "";
+        protected BitStreamReader m_Stream = null;
+        protected List<DemuxTrack> m_Tracks = new List<DemuxTrack>();
+        protected long m_rtDuration = 0;
+        protected EventWaitHandle m_hQuit = null;
+        protected EventWaitHandle m_hEOS = null;
+        private bool m_bRequireDemuxThread = false;
+        protected string m_sFileName = "";
 
         #endregion
 
@@ -9619,7 +9623,7 @@ namespace DirectShow.BaseClasses
             m_bRequireDemuxThread = bRequireDemuxThread;
         }
 
-	    ~FileParser()
+        ~FileParser()
         {
             CloseInput();
         }
@@ -9651,7 +9655,7 @@ namespace DirectShow.BaseClasses
 
         public long Duration
         {
-            get 
+            get
             {
                 if (m_rtDuration == 0)
                 {
@@ -9898,7 +9902,7 @@ namespace DirectShow.BaseClasses
         public override int CompleteConnect(ref IPinImpl pReceivePin)
         {
             int hr = base.CompleteConnect(ref pReceivePin);
-	        if (FAILED(hr)) return hr;
+            if (FAILED(hr)) return hr;
             return (m_Filter as BaseSplitter).CompleteConnect(ref pReceivePin);
         }
 
@@ -9967,7 +9971,8 @@ namespace DirectShow.BaseClasses
         public bool StreamEnabled
         {
             get { return m_bStreamEnabled; }
-            set {
+            set
+            {
                 lock (m_csEnableLock)
                 {
                     if (m_bStreamEnabled != value)
@@ -10006,7 +10011,7 @@ namespace DirectShow.BaseClasses
             HRESULT hr = NOERROR;
             lock (m_csFlushLock)
             {
-                if (!m_evFlush.WaitOne(0,false))
+                if (!m_evFlush.WaitOne(0, false))
                 {
                     TRACE("Begin Flush");
                     {
@@ -10027,7 +10032,7 @@ namespace DirectShow.BaseClasses
             HRESULT hr = NOERROR;
             lock (m_csFlushLock)
             {
-                if (m_evFlush.WaitOne(0,false))
+                if (m_evFlush.WaitOne(0, false))
                 {
                     m_pTrack.Flush();
                     if (IsConnected)
@@ -10170,7 +10175,7 @@ namespace DirectShow.BaseClasses
         public void StartThread()
         {
             m_evQuit.Reset();
-            if (m_evReady.WaitOne(0,false))
+            if (m_evReady.WaitOne(0, false))
             {
                 m_WorkerThread.Create();
             }
@@ -10179,7 +10184,7 @@ namespace DirectShow.BaseClasses
         public void StopThread()
         {
             m_evQuit.Set();
-            if (!m_evReady.WaitOne(0,false))
+            if (!m_evReady.WaitOne(0, false))
             {
                 bool bFlush = false;
                 if (m_WorkerThread.ThreadExists)
@@ -10188,7 +10193,7 @@ namespace DirectShow.BaseClasses
                     {
                         lock (m_csFlushLock)
                         {
-                            if (!m_evFlush.WaitOne(0,false))
+                            if (!m_evFlush.WaitOne(0, false))
                             {
                                 m_evFlush.Set();
                                 bFlush = true;
@@ -10210,27 +10215,27 @@ namespace DirectShow.BaseClasses
 
         protected virtual void ThreadProc()
         {
-	        m_bEOSDelivered = false;
-	        IMediaSampleImpl _sample;
-	        long _start,_stop;
-	        double _rate;
-	        (m_Filter as BaseSplitter).GetPositions(out _start,out _stop,out _rate);
-	        DeliverNewSegment(_start, _stop, _rate);
-	        m_evReady.Reset();
+            m_bEOSDelivered = false;
+            IMediaSampleImpl _sample;
+            long _start, _stop;
+            double _rate;
+            (m_Filter as BaseSplitter).GetPositions(out _start, out _stop, out _rate);
+            DeliverNewSegment(_start, _stop, _rate);
+            m_evReady.Reset();
             long _shift = 0;
             bool bEnabled;
             lock (m_csEnableLock)
             {
                 bEnabled = m_bStreamEnabled;
             }
-	        while (!m_evQuit.WaitOne(0,false))
-	        {
-		        long tStart = 0,tStop = 0;
-		        bool bEOS = m_pTrack.IsEOS;
-		        _sample = null;
-		        HRESULT hr;
-		        if (!bEOS)
-		        {
+            while (!m_evQuit.WaitOne(0, false))
+            {
+                long tStart = 0, tStop = 0;
+                bool bEOS = m_pTrack.IsEOS;
+                _sample = null;
+                HRESULT hr;
+                if (!bEOS)
+                {
                     lock (m_csThreadLock)
                     {
                         IntPtr pSample;
@@ -10297,19 +10302,19 @@ namespace DirectShow.BaseClasses
                         }
                     }
                     //TRACE(string.Format("Sample: start {0}, stop {1}", tStart / 10000, tStop / 10000));
-		        }
-		        if (bEOS)
-		        {
-			        if (_sample != null) _sample._Release();
-			        if (!m_evFlush.WaitOne(0,false) && !(m_Filter as BaseSplitter).QuitEvent.WaitOne(0,false) && !m_evQuit.WaitOne(0,false))
-			        {
-				        DeliverBeginFlush();
-				        DeliverEndFlush();
-				        TRACE("EOS Delivered");
+                }
+                if (bEOS)
+                {
+                    if (_sample != null) _sample._Release();
+                    if (!m_evFlush.WaitOne(0, false) && !(m_Filter as BaseSplitter).QuitEvent.WaitOne(0, false) && !m_evQuit.WaitOne(0, false))
+                    {
+                        DeliverBeginFlush();
+                        DeliverEndFlush();
+                        TRACE("EOS Delivered");
 #if !DEBUG
 				        try {
 #endif
-				        DeliverEndOfStream();
+                        DeliverEndOfStream();
 #if !DEBUG
 				        } catch
 				        {
@@ -10317,35 +10322,35 @@ namespace DirectShow.BaseClasses
 					        TRACE("EOS exception");
 				            m_Filter.NotifyEvent(EventCode.ErrorAbort, (IntPtr)((int)E_UNEXPECTED), IntPtr.Zero);	
 				        }
-#endif                       
-				        m_bEOSDelivered = true;
-			        }
-			        break;
-		        }
-		        if (_sample != null)
-		        {
-			        if (m_evFlush.WaitOne(0,false) && m_pTrack.Type == DemuxTrack.TrackType.Audio)
-			        {
-				        _sample.SetDiscontinuity(true);
-			        }
+#endif
+                        m_bEOSDelivered = true;
+                    }
+                    break;
+                }
+                if (_sample != null)
+                {
+                    if (m_evFlush.WaitOne(0, false) && m_pTrack.Type == DemuxTrack.TrackType.Audio)
+                    {
+                        _sample.SetDiscontinuity(true);
+                    }
                     lock (m_csEnableLock)
                     {
-				        bEnabled = m_bStreamEnabled;
-			        }
-			        if (!bEnabled)
-			        {
+                        bEnabled = m_bStreamEnabled;
+                    }
+                    if (!bEnabled)
+                    {
                         _sample._Release();
-				        continue;
-			        }
+                        continue;
+                    }
 #if !DEBUG
                     try {
 #endif
-			        hr = (HRESULT)Deliver(ref _sample);
-			        _sample._Release();
-			        if (hr != S_OK)
-			        {
-				        break;
-			        }
+                    hr = (HRESULT)Deliver(ref _sample);
+                    _sample._Release();
+                    if (hr != S_OK)
+                    {
+                        break;
+                    }
 #if !DEBUG
 			        } catch
 			        {
@@ -10369,7 +10374,7 @@ namespace DirectShow.BaseClasses
 #endif
                 }
             }
-	        m_evReady.Set();
+            m_evReady.Set();
         }
 
         #endregion
@@ -10440,10 +10445,10 @@ namespace DirectShow.BaseClasses
             }
             else
                 if (pFormat == TimeFormat.None)
-                {
-                    (m_Filter as BaseSplitter).DeselectSeekingPin(this);
-                    return S_OK;
-                }
+            {
+                (m_Filter as BaseSplitter).DeselectSeekingPin(this);
+                return S_OK;
+            }
             return E_NOTIMPL;
         }
 
@@ -10460,7 +10465,7 @@ namespace DirectShow.BaseClasses
         public virtual int GetStopPosition(out long pStop)
         {
             long _current;
-            return GetPositions(out _current,out pStop);
+            return GetPositions(out _current, out pStop);
         }
 
         public virtual int GetCurrentPosition(out long pCurrent)
@@ -10536,7 +10541,7 @@ namespace DirectShow.BaseClasses
         public virtual int GetPositions(out long pCurrent, out long pStop)
         {
             double _rate;
-            (m_Filter as BaseSplitter).GetPositions(out pCurrent, out  pStop, out _rate);
+            (m_Filter as BaseSplitter).GetPositions(out pCurrent, out pStop, out _rate);
             if (m_rtPosition >= 0)
             {
                 pCurrent = m_rtPosition;
@@ -10628,7 +10633,7 @@ namespace DirectShow.BaseClasses
 
         public string FileName
         {
-            get 
+            get
             {
                 if (string.IsNullOrEmpty(m_sFileName) && InputPin != null)
                 {
@@ -10658,19 +10663,19 @@ namespace DirectShow.BaseClasses
 
         public SplitterInputPin InputPin
         {
-            get 
+            get
             {
                 if (Pins.Count > 0 && Pins[0].Direction == PinDirection.Input)
                 {
                     return (Pins[0] as SplitterInputPin);
                 }
-                return null; 
+                return null;
             }
         }
 
         public SplitterOutputPin SeekingPin
         {
-            get 
+            get
             {
                 lock (m_csSeeking)
                 {
@@ -10866,7 +10871,7 @@ namespace DirectShow.BaseClasses
                     {
                         m_pSeekingPin = null;
                     }
-	            }
+                }
                 while (Pins.Count > 0)
                 {
                     BasePin _pin = Pins[Pins.Count - 1];
@@ -10953,7 +10958,7 @@ namespace DirectShow.BaseClasses
         {
             if (m_pFileParser == null) return E_UNEXPECTED;
             int nAdded = 0;
-	        int nCount = m_pFileParser.Count;
+            int nCount = m_pFileParser.Count;
             int[] _indexes = new int[(int)DemuxTrack.TrackType.Subtitles + 1];
             bool[] _useIndexes = new bool[_indexes.Length];
             for (int i = 0; i < _indexes.Length; i++)
@@ -11002,7 +11007,7 @@ namespace DirectShow.BaseClasses
                     nAdded++;
                 }
             }
-	        return (nAdded == 0 ? VFW_E_NO_ACCEPTABLE_TYPES : NOERROR);
+            return (nAdded == 0 ? VFW_E_NO_ACCEPTABLE_TYPES : NOERROR);
         }
 
         #endregion
@@ -11244,7 +11249,7 @@ namespace DirectShow.BaseClasses
                             _key = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey("Media Type\\Extensions\\" + _setup.Extension);
                             if (_key != null)
                             {
-                                string _guid = (string)_key.GetValue("Source Filter","");
+                                string _guid = (string)_key.GetValue("Source Filter", "");
                                 if (_guid == this.GetType().GUID.ToString("B"))
                                 {
                                     _key.Close();
@@ -11455,7 +11460,7 @@ namespace DirectShow.BaseClasses
                     m_evDemuxStarted.Reset();
                     lock (m_csThreadLock)
                     {
-                        if (m_evReady.WaitOne(0,false))
+                        if (m_evReady.WaitOne(0, false))
                         {
                             m_evDemuxStarted.Reset();
                             m_evReady.Reset();
@@ -11525,11 +11530,11 @@ namespace DirectShow.BaseClasses
 #endif
                     }
                 }
-                while (!m_evQuit.WaitOne(0,false) && !m_evEOS.WaitOne(0,false));
+                while (!m_evQuit.WaitOne(0, false) && !m_evEOS.WaitOne(0, false));
                 m_pFileParser.OnDemuxStop();
-                if (!m_evQuit.WaitOne(0,false))
+                if (!m_evQuit.WaitOne(0, false))
                 {
-                    while (!m_evQuit.WaitOne(0,false))
+                    while (!m_evQuit.WaitOne(0, false))
                     {
                         long _duration = UNITS;
                         int nCount = 0;
@@ -11564,7 +11569,7 @@ namespace DirectShow.BaseClasses
                         }
                         if (nCount != Pins.Count)
                         {
-                            m_evQuit.WaitOne((int)(_duration / 10000),false);
+                            m_evQuit.WaitOne((int)(_duration / 10000), false);
                         }
                         else
                         {
@@ -11610,8 +11615,8 @@ namespace DirectShow.BaseClasses
                     return NOERROR;
                 }
             }
-            catch 
-            {   
+            catch
+            {
             }
             m_bLoading = false;
             UnloadFile();
@@ -11877,7 +11882,7 @@ namespace DirectShow.BaseClasses
                     {
                         bHaveType = false;
                     }
-                    
+
                 }
                 if (bHaveType)
                 {
@@ -12019,7 +12024,7 @@ namespace DirectShow.BaseClasses
             {
                 m_Parsers.Add(_parser);
             }
-            AddPin(new SplitterInputPin("Input",this));
+            AddPin(new SplitterInputPin("Input", this));
         }
 
         #endregion
@@ -12054,7 +12059,7 @@ namespace DirectShow.BaseClasses
     public class BaseSplitterFilterTemplate<Parser> : BaseSplitterFilter where Parser : FileParser, new()
     {
         public BaseSplitterFilterTemplate(string _name)
-            : base (_name,new Parser())
+            : base(_name, new Parser())
         {
         }
     }
@@ -12264,7 +12269,7 @@ namespace DirectShow.BaseClasses
 
         public long Position
         {
-            get 
+            get
             {
                 long _position;
                 lock (m_csPostionLock)
@@ -12299,7 +12304,7 @@ namespace DirectShow.BaseClasses
 
         public bool IsWaiting
         {
-            get { return !m_evReady.WaitOne(0,false) && m_Queue.IsEmpty; }
+            get { return !m_evReady.WaitOne(0, false) && m_Queue.IsEmpty; }
         }
 
         public bool IsEOS
@@ -12363,7 +12368,7 @@ namespace DirectShow.BaseClasses
             while (true)
             {
                 WaitHandle.WaitAny(new WaitHandle[] { m_evReady, m_pWriter.QuitEvent, m_hFlush });
-                if (m_evReady.WaitOne(0,false))
+                if (m_evReady.WaitOne(0, false))
                 {
                     PacketData pPacket;
                     if (m_Queue.Peek(out pPacket, true))
@@ -12393,7 +12398,7 @@ namespace DirectShow.BaseClasses
         {
             PacketData _packet = new PacketData();
             _packet.SyncPoint = _sample.IsSyncPoint() == S_OK;
-            long _start,_stop;
+            long _start, _stop;
             _sample.GetTime(out _start, out _stop);
             _packet.Start = _start;
             _packet.Stop = _stop;
@@ -12484,7 +12489,7 @@ namespace DirectShow.BaseClasses
             m_bRequireMuxThread = bRequireMuxThread;
         }
 
-	    ~FileWriter()
+        ~FileWriter()
         {
             Dispose();
         }
@@ -12763,8 +12768,8 @@ namespace DirectShow.BaseClasses
 
         #region Constructor
 
-        public MuxerInputPin(string _name,BaseMuxer _filter)
-            : base(_name,_filter)
+        public MuxerInputPin(string _name, BaseMuxer _filter)
+            : base(_name, _filter)
         {
 
         }
@@ -12893,7 +12898,7 @@ namespace DirectShow.BaseClasses
 
         public override int CompleteConnect(ref IPinImpl pReceivePin)
         {
-            HRESULT hr = (HRESULT )base.CompleteConnect(ref pReceivePin);
+            HRESULT hr = (HRESULT)base.CompleteConnect(ref pReceivePin);
             if (hr.Failed) return hr;
             lock (m_csTrackLock)
             {
@@ -12969,10 +12974,10 @@ namespace DirectShow.BaseClasses
         public override int OnReceive(ref IMediaSampleImpl _sample)
         {
             HRESULT hr = (HRESULT)CheckStreaming();
-            if (hr == S_OK && !m_bEOSDelivered && !m_evFlush.WaitOne(0,false))
+            if (hr == S_OK && !m_bEOSDelivered && !m_evFlush.WaitOne(0, false))
             {
                 hr = (HRESULT)base.OnReceive(ref _sample);
-		        if (hr != S_OK) return hr;
+                if (hr != S_OK) return hr;
                 long _start, _stop;
                 hr = (HRESULT)_sample.GetTime(out _start, out _stop);
                 int lSize = _sample.GetActualDataLength();
@@ -13057,7 +13062,7 @@ namespace DirectShow.BaseClasses
         #region Constructor
 
         public MuxerOutputPin(BaseMuxer _filter)
-            : base("Output",_filter)
+            : base("Output", _filter)
         {
 
         }
@@ -13163,7 +13168,7 @@ namespace DirectShow.BaseClasses
 
         public MuxerOutputPin OutputPin
         {
-            get 
+            get
             {
                 foreach (BasePin _pin in Pins)
                 {
@@ -13335,7 +13340,7 @@ namespace DirectShow.BaseClasses
         {
             if (m_pFileWriter != null)
             {
-                return m_pFileWriter.GetMediaType(iPosition,ref pmt);
+                return m_pFileWriter.GetMediaType(iPosition, ref pmt);
             }
             return E_NOTIMPL;
         }
@@ -13402,7 +13407,7 @@ namespace DirectShow.BaseClasses
                             BitStreamWriter _writer = new BitStreamWriter(new COMStream(pStream));
                             try
                             {
-                                hr = m_pFileWriter.OpenOutput(_writer,m_bOverwrite);
+                                hr = m_pFileWriter.OpenOutput(_writer, m_bOverwrite);
                             }
                             catch (Exception _exception)
                             {
@@ -13475,7 +13480,7 @@ namespace DirectShow.BaseClasses
                 m_evMuxStarted.Reset();
                 lock (m_csThreadLock)
                 {
-                    if (m_evReady.WaitOne(0,false))
+                    if (m_evReady.WaitOne(0, false))
                     {
                         m_evMuxStarted.Reset();
                         m_evReady.Reset();
@@ -13523,7 +13528,7 @@ namespace DirectShow.BaseClasses
                 long _maxPosition;
                 while (!bFlush)
                 {
-                    bFlush = m_evQuit.WaitOne(5,false);
+                    bFlush = m_evQuit.WaitOne(5, false);
                     if (!bFlush)
                     {
                         _minPosition = MAX_LONG;
@@ -13809,12 +13814,12 @@ namespace DirectShow.BaseClasses
     {
         #region Constructor
 
-        protected BaseMuxerFilter(string _name,FileWriter _writer)
-            : base(_name,_writer)
+        protected BaseMuxerFilter(string _name, FileWriter _writer)
+            : base(_name, _writer)
         {
             AddPin(new MuxerOutputPin(this));
         }
-        
+
         #endregion
     }
 
@@ -13827,10 +13832,10 @@ namespace DirectShow.BaseClasses
         #region Constructor
 
         protected BaseFileWriterFilter(string _name, FileWriter _writer)
-            : base(_name,_writer)
+            : base(_name, _writer)
         {
         }
-        
+
         #endregion
     }
 

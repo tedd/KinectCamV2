@@ -305,7 +305,7 @@ namespace KinectCam
 
             frame.CopyFrameDataToIntPtr(pinnedDepthFrame.AddrOfPinnedObject(), pinnedDepthFrameLength);
             //Sensor.CoordinateMapper.MapDepthFrameToColorSpaceUsingIntPtr(pinnedDepthFrame.AddrOfPinnedObject(),pinnedDepthFrameLength,);
-            Sensor.CoordinateMapper.MapColorFrameToDepthSpaceUsingIntPtr(pinnedDepthFrame.AddrOfPinnedObject(), pinnedDepthFrameLength,pinnedDepthSpacePoints.AddrOfPinnedObject(), pinnedDepthSpaceLength);
+            Sensor.CoordinateMapper.MapColorFrameToDepthSpaceUsingIntPtr(pinnedDepthFrame.AddrOfPinnedObject(), pinnedDepthFrameLength, pinnedDepthSpacePoints.AddrOfPinnedObject(), pinnedDepthSpaceLength);
         }
 
         public static void DisposeSensor()
