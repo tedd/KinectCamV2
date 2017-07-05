@@ -8,7 +8,7 @@
   * Using GC pinned managed arrays to get IntPtr.
   * Using IntPtr Kinect SDK API instead of managed arrays.
   * Aligned bitmap type and resolution between Kinect SDK and DirectShow-filter so no extra conversion required.
-  * Using memcpy interop to copy data as fast as possible into DirectShow. This means removing all extra functionality such as zoom, face track and mirroring. This was responsible for most of the CPU usage.
+  * Using memcpy interop to copy data as fast as possible into DirectShow. This means removing all extra functionality such as zoom, face tracking and mirroring. This was responsible for most of the CPU usage.
 
 Total speed change: OBS went from 8%-9% to 1%-2% CPU usage on my computer.
 
