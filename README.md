@@ -21,7 +21,7 @@ Total speed change: OBS went from 8%-9% to 1%-2% CPU usage on my computer.
   * Added unregister and register for every compile for rapid testing.
   * Added compile profiles for Debug and Release for both x86 and x64.
 
-# OBS
+# OBS-compatibility
 This fork focuses on making Kinect v2 usable with OBS. Issues with OBS has been solved, and CPU usage has been dropped to near nothing.
 The functionality for mirror, zoom and face tracking has been disabled because it was using a lot of CPU (~8% on my computer).
 
@@ -32,7 +32,7 @@ Note that image is inverted. You can correct this in OBS by resizing image negat
 # Other
 Currently registers as a 32-bit webcamera. Should work with any webcam compatible app.
 
-## Skype for Business
+## Special note for Skype for Business
 Also from http://codingbytodesign.net/2014/07/20/kinectcamv2-for-kinect-v2/:
 Many people want to use this solution for Skype for Business 2016 or older. The solution is very simple, because Skype for Business 2016 and older uses .NET Framework 2.0 runtime and KinectCamV2 driver is written in .NET Framework 4.0, so to force Skype for Business 2016 or older to use .NET Framework 4.0 all you have to do is very simple thing. You have to create lync.exe.config file with following content.
 ```xml
@@ -45,7 +45,7 @@ Many people want to use this solution for Skype for Business 2016 or older. The 
 ```
 And copy it to the place where you have lync.exe installed, for example inside folder: “C:\Program Files (x86)\Microsoft Office\Root\Office16”. This solution can be used for other solutions that uses .NET Framework and you need force to use higer version of .NET Framework. 
 
-## Code history
+## Contributors
 Original code is from Piotr Sowa:
   * http://codingbytodesign.net/2014/07/20/kinectcamv2-for-kinect-v2/
   * http://codingbytodesign.net/2015/02/08/coding-by-to-design-of-kinectcamv2/
