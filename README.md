@@ -1,11 +1,33 @@
 
 # KinectCamV2
 
+# Changelog
+
+## 2017-07-04 Tedd
+### Speed
+  * Using GC pinned managed arrays to get IntPtr.
+  * Using IntPtr Kinect SDK API instead of managed arrays.
+  * Aligned bitmap type and resolution between Kinect SDK and DirectShow-filter so no extra conversion required.
+  * Using memcpy interop to copy data as fast as possible into DirectShow. This means removing all extra functionality such as zoom, face track and mirroring. This was responsible for most of the CPU usage.
+
+Total speed change: OBS went from 8%-9% to 1%-2% CPU usage on my computer.
+
+### Compatibility
+  * Fixed bug in image copy which prevented camera from working in OBS.
+  * Added 64-bit support
+
+### Other
+  * Upgraded to .Net 4.6.2.
+  * Added unregister and register for every compile for rapid testing.
+  * Added compile profiles for Debug and Release for both x86 and x64.
+
 # OBS
 This fork focuses on making Kinect v2 usable with OBS. Issues with OBS has been solved, and CPU usage has been dropped to near nothing.
 The functionality for mirror, zoom and face tracking has been disabled because it was using a lot of CPU (~8% on my computer).
 
 Only tested on 32-bit OBS, but compile should work for both 32-bit and 64-bit.
+
+Note that image is inverted. You can correct this in OBS by resizing image negatively (just drag one corner across another corner). This is how the image is delivered from Kinect SDK, and if I attempt to fix it then thats it will slow down the driver a bit. OBS does this fast, so no problem.
 
 # Other
 Currently registers as a 32-bit webcamera. Should work with any webcam compatible app.
