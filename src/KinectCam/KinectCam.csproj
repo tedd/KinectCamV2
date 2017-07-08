@@ -38,6 +38,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -90,13 +92,24 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Alea, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ba52afc3c2e933d6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Alea.3.0.3\lib\net45\Alea.dll</HintPath>
+    </Reference>
+    <Reference Include="Alea.IL, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ba52afc3c2e933d6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Alea.3.0.3\lib\net45\Alea.IL.dll</HintPath>
+    </Reference>
+    <Reference Include="Alea.Parallel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ba52afc3c2e933d6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Alea.3.0.3\lib\net45\Alea.Parallel.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Kinect, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Microsoft SDKs\Kinect\v2.0-PublicPreview1407\Assemblies\Microsoft.Kinect.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -138,6 +151,7 @@
     <None Include="install.bat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -154,9 +168,13 @@
     <Compile Include="AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ColorComparison\CieDe2000Comparer.cs" />
+    <Compile Include="ColorComparison\RgbToLabConverter.cs" />
+    <Compile Include="Gpu\GpuImageProcessing.cs" />
     <Compile Include="IconExtractor.cs" />
     <Compile Include="KinectCamSettigns.cs" />
     <Compile Include="KinectHelper.cs" />
+    <Compile Include="ManagedArrayWithPointer.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -190,9 +208,13 @@
     <None Include="Resources\dx5_logo.bmp" />
     <None Include="KinectCam.snk" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>%25windir%25\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe /unregister /nologo "$(TargetDir)BaseClassesNET.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
+    <PreBuildEvent>
+%25windir%25\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe /unregister /nologo "$(TargetDir)BaseClassesNET.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
 %25windir%25\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe /unregister /nologo "$(TargetDir)KinectCam.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
 
 %25windir%25\Microsoft.NET\Framework\v4.0.30319\ngen.exe uninstall "$(TargetDir)BaseClassesNET.dll" 2&gt;nul &gt;nul &amp;set errorlevel=0
@@ -208,7 +230,14 @@
 exit 0</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>
+    <PostBuildEvent>REM %25windir%25\Microsoft.NET\Framework64\v4.0.30319\ngen.exe install "$(TargetDir)System.Numerics.Vectors.dll"
+REM %25windir%25\Microsoft.NET\Framework64\v4.0.30319\ngen.exe install "$(TargetDir)BaseClassesNET.dll"
+REM %25windir%25\Microsoft.NET\Framework64\v4.0.30319\ngen.exe install "$(TargetDir)KinectCam.dll"
+
+%25windir%25\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe /nologo "$(TargetDir)BaseClassesNET.dll"
+%25windir%25\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe "$(TargetDir)KinectCam.dll" /nologo /codebase /tlb: KinectCam.tlb
+
+
 if $(SolutionName) == x86 %25windir%25\Microsoft.NET\Framework\v4.0.30319\ngen.exe install "$(TargetDir)BaseClassesNET.dll"
 if $(SolutionName) == x86 %25windir%25\Microsoft.NET\Framework\v4.0.30319\ngen.exe install "$(TargetDir)KinectCam.dll"
 
@@ -223,6 +252,15 @@ if $(SolutionName) == x64 %25windir%25\Microsoft.NET\Framework64\v4.0.30319\RegA
 if $(SolutionName) == x64 %25windir%25\Microsoft.NET\Framework64\v4.0.30319\RegAsm.exe "$(TargetDir)KinectCam.dll" /nologo /codebase /tlb: KinectCam.tlb
 </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\Alea.3.0.3\build\Alea.targets" Condition="Exists('..\packages\Alea.3.0.3\build\Alea.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Alea.3.0.3\build\Alea.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Alea.3.0.3\build\Alea.targets'))" />
+    <Error Condition="!Exists('..\packages\Fody.1.29.4\build\dotnet\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.29.4\build\dotnet\Fody.targets'))" />
+  </Target>
+  <Import Project="..\packages\Fody.1.29.4\build\dotnet\Fody.targets" Condition="Exists('..\packages\Fody.1.29.4\build\dotnet\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -5,8 +5,10 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using KinectCam.Gpu;
 
 namespace KinectCam
 {
@@ -147,7 +149,7 @@ namespace KinectCam
                 if (sensor == null) return;
 
                 //var reader = sensor.OpenMultiSourceFrameReader(FrameSourceTypes.Color | FrameSourceTypes.Body | FrameSourceTypes.Depth); //ColorFrameSource.OpenReader();
-                var reader = sensor.OpenMultiSourceFrameReader(FrameSourceTypes.Color | FrameSourceTypes.Depth); //ColorFrameSource.OpenReader();
+                var reader = sensor.OpenMultiSourceFrameReader(FrameSourceTypes.Color); //ColorFrameSource.OpenReader();
                 reader.MultiSourceFrameArrived += reader_FrameArrived;
                 sensor.Open();
 
@@ -276,36 +278,34 @@ namespace KinectCam
 
         static unsafe void ColorFrameReady(ColorFrame frame)
         {
-            // Using IntPtr saves us another 1-2% on my computer
-            if (frame.RawColorImageFormat == ColorImageFormat.Bgra)
+            lock (colorFrameData.Lock)
             {
-                frame.CopyRawFrameDataToIntPtr(pinnedColorFrame.AddrOfPinnedObject(), pinnedColorFrameLength);
-                //frame.CopyRawFrameDataToArray(sensorColorFrameData);
-            }
-            else
-            {
-                frame.CopyConvertedFrameDataToIntPtr(pinnedColorFrame.AddrOfPinnedObject(), pinnedColorFrameLength, ColorImageFormat.Bgra);
-                //frame.CopyConvertedFrameDataToArray(sensorColorFrameData, ColorImageFormat.Bgra);
+                // Using IntPtr saves us another 1-2% on my computer
+                if (frame.RawColorImageFormat == ColorImageFormat.Bgra)
+                {
+                    frame.CopyRawFrameDataToIntPtr(colorFrameData.IntPtr, colorFrameData.Length);
+                    //frame.CopyRawFrameDataToArray(sensorColorFrameData);
+                }
+                else
+                {
+                    frame.CopyConvertedFrameDataToIntPtr(colorFrameData.IntPtr, colorFrameData.Length, ColorImageFormat.Bgra);
+                    //frame.CopyConvertedFrameDataToArray(sensorColorFrameData, ColorImageFormat.Bgra);
+                }
             }
         }
         static unsafe void DepthFrameReady(DepthFrame frame)
         {
-            if (!pinnedDepthFrameSet)
+            if (depthFrameData == null)
             {
-                sensorDepthFrameData = new ushort[frame.FrameDescription.LengthInPixels];
-                pinnedDepthFrameLength = frame.FrameDescription.LengthInPixels * frame.FrameDescription.BytesPerPixel;
-                pinnedDepthFrame = GCHandle.Alloc(sensorDepthFrameData, GCHandleType.Pinned);
-                pinnedDepthFrameSet = true;
-
-                sensorDepthSpacePoints = new DepthSpacePoint[sensorDepthFrameData.Length];
-                pinnedDepthSpaceLength = (uint)sensorDepthSpacePoints.Length;
-                pinnedDepthSpacePoints = GCHandle.Alloc(sensorDepthSpacePoints, GCHandleType.Pinned);
-                pinnedDepthSpaceSet = true;
+                depthFrameData=new ManagedArrayWithPointer<ushort>((int)frame.FrameDescription.LengthInPixels);
             }
 
-            frame.CopyFrameDataToIntPtr(pinnedDepthFrame.AddrOfPinnedObject(), pinnedDepthFrameLength);
+            lock (depthFrameData.Lock)
+            {
+                frame.CopyFrameDataToIntPtr(depthFrameData.IntPtr, depthFrameData.Length);
+            }
             //Sensor.CoordinateMapper.MapDepthFrameToColorSpaceUsingIntPtr(pinnedDepthFrame.AddrOfPinnedObject(),pinnedDepthFrameLength,);
-            Sensor.CoordinateMapper.MapColorFrameToDepthSpaceUsingIntPtr(pinnedDepthFrame.AddrOfPinnedObject(), pinnedDepthFrameLength, pinnedDepthSpacePoints.AddrOfPinnedObject(), pinnedDepthSpaceLength);
+            //Sensor.CoordinateMapper.MapColorFrameToDepthSpaceUsingIntPtr(pinnedDepthFrame.AddrOfPinnedObject(), pinnedDepthFrameLength, pinnedDepthSpacePoints.AddrOfPinnedObject(), pinnedDepthSpaceLength);
         }
 
         public static void DisposeSensor()
@@ -358,152 +358,156 @@ namespace KinectCam
 
         public static int ZoomedPointerStart = ZoomedHeightStart * 1920 * 4 + ZoomedWidthStart * 4;
         public static int ZoomedPointerEnd = ZoomedHeightEnd * 1920 * 4 + ZoomedWidthEnd * 4;
-        static readonly byte[] sensorColorFrameData = new byte[1920 * 1080 * 4];
-        private static readonly uint pinnedColorFrameLength = 1920 * 1080 * 4;
-        private static GCHandle pinnedColorFrame;
-        private static bool pinnedColorFrameSet = false;
 
-        private static UInt16[] sensorDepthFrameData;
-        private static uint pinnedDepthFrameLength = 512 * 424 * 2;
-        private static GCHandle pinnedDepthFrame;
-        private static bool pinnedDepthFrameSet = false;
+        private static ManagedArrayWithPointer<byte> colorFrameData = new ManagedArrayWithPointer<byte>(1920 * 1080 * 4);
+        private static ManagedArrayWithPointer<byte> colorFrameOutData = new ManagedArrayWithPointer<byte>(1920 * 1080 * 4);
+        private static ManagedArrayWithPointer<UInt16> depthFrameData;
+        private static ManagedArrayWithPointer<DepthSpacePoint> depthSpacePoints;
 
-        private static DepthSpacePoint[] sensorDepthSpacePoints;
-        private static uint pinnedDepthSpaceLength;
-        private static GCHandle pinnedDepthSpacePoints;
-        private static bool pinnedDepthSpaceSet = false;
 
 
         [DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
         public static extern IntPtr memcpy(IntPtr dest, IntPtr src, UInt32 count);
 
-        public unsafe static void GenerateFrame(IntPtr _ptr, int length, int cHeight, int cWidth, int cBitDepth, bool mirrored, bool zoom)
+        public unsafe static void GenerateFrame(IntPtr _ptr, int length, int cWidth, int cHeight, int cBitDepth, bool mirrored, bool zoom)
         {
-            byte[] colorFrame = sensorColorFrameData;
             void* camData = _ptr.ToPointer();
-
+            byte* pData = (byte*)camData;
             try
             {
                 InitializeSensor();
 
 
-                if (colorFrame != null)
+
+                lock (colorFrameData.Lock)
                 {
-                    int colorFramePointerStart = zoom ? ZoomedPointerStart : 0;
-                    int colorFramePointerEnd = zoom ? ZoomedPointerEnd - 1 : colorFrame.Length - 1;
-                    int width = zoom ? ZoomedWidth : SensorWidth;
+                    //int colorFramePointerStart = zoom ? ZoomedPointerStart : 0;
+                    //int colorFramePointerEnd = zoom ? ZoomedPointerEnd - 1 : colorFrameData.Array.Length - 1;
+                    //int width = zoom ? ZoomedWidth : SensorWidth;
 
-                    if (!pinnedColorFrameSet)
-                    {
-                        pinnedColorFrame = GCHandle.Alloc(colorFrame, GCHandleType.Pinned);
-                        pinnedColorFrameSet = true;
-                    }
 
-                    memcpy(_ptr, pinnedColorFrame.AddrOfPinnedObject(), (uint)Math.Min(colorFrame.Length, cWidth * cHeight * (cBitDepth / 8)));
+                    //for (int i = 0; i < (cWidth * cHeight * (cBitDepth / 8)) / 2; i += 2)
+                    //    sensorColorFrameData[i] = 0;
+
+                    GpuImageProcessing.Process(colorFrameData, colorFrameOutData, cWidth, cHeight, cBitDepth / 8);
+
+                    memcpy(_ptr, colorFrameOutData.IntPtr, (uint)Math.Min(colorFrameOutData.Length, cWidth * cHeight * (cBitDepth / 8)));
+                    //memcpy(_ptr, colorFrameData.IntPtr, (uint)Math.Min(colorFrameOutData.Length, cWidth * cHeight * (cBitDepth / 8)));
                     // I've shortcircuited all fancy functionality simply because unmanaged memory copy uses around 8% less CPU on my computer
 
+                    //// Test
+                    //// Vector<int>.Length is equal to 4 when RyuJIT produces SSE2 instructions
+                    //for (int i = 0; i < sensorColorFrameData.Length-16; i += 1)
+                    //{
+                    //    // Each vector works with 4 int values from i to i + 4 when RyuJIT produces SSE2 instructions 
+                    //    var vectorIn = new Vector<byte>(sensorColorFrameData, i);
+                    //    var vectorOut = Vector.Add(vectorIn, new Vector<byte>(128));
+                    //    vectorOut.CopyTo(sensorColorFrameData, i);
+                    //}
+
+
                     return;
-                    if (!mirrored)
-                    {
-                        fixed (byte* sDataB = &colorFrame[colorFramePointerStart])
-                        fixed (byte* sDataE = &colorFrame[colorFramePointerEnd])
-                        {
-                            byte* pData = (byte*)camData;
-                            byte* sData = (byte*)sDataE;
-                            bool redo = true;
+                    //if (!mirrored)
+                    //{
+                    //    fixed (byte* sDataB = &colorFrame[colorFramePointerStart])
+                    //    fixed (byte* sDataE = &colorFrame[colorFramePointerEnd])
+                    //    {
+                    //        byte* pData = (byte*)camData;
+                    //        byte* sData = (byte*)sDataE;
+                    //        bool redo = true;
 
-                            for (; sData > sDataB;)
-                            {
-                                for (var i = 0; i < width; ++i)
-                                {
-                                    var p = sData - 3;
-                                    *pData++ = *p++;
-                                    *pData++ = *p++;
-                                    *pData++ = *p++;
-                                    if (zoom)
-                                    {
-                                        p = sData - 3;
-                                        *pData++ = *p++;
-                                        *pData++ = *p++;
-                                        *pData++ = *p++;
-                                    }
-                                    sData -= 4;
-                                }
-                                if (zoom)
-                                {
-                                    if (redo)
-                                    {
-                                        sData += width * 4;
-                                    }
-                                    else
-                                    {
-                                        sData -= (SensorWidth - ZoomedWidth) * 4;
-                                    }
-                                    redo = !redo;
+                    //        for (; sData > sDataB;)
+                    //        {
+                    //            for (var i = 0; i < width; ++i)
+                    //            {
+                    //                var p = sData - 3;
+                    //                *pData++ = *p++;
+                    //                *pData++ = *p++;
+                    //                *pData++ = *p++;
+                    //                if (zoom)
+                    //                {
+                    //                    p = sData - 3;
+                    //                    *pData++ = *p++;
+                    //                    *pData++ = *p++;
+                    //                    *pData++ = *p++;
+                    //                }
+                    //                sData -= 4;
+                    //            }
+                    //            if (zoom)
+                    //            {
+                    //                if (redo)
+                    //                {
+                    //                    sData += width * 4;
+                    //                }
+                    //                else
+                    //                {
+                    //                    sData -= (SensorWidth - ZoomedWidth) * 4;
+                    //                }
+                    //                redo = !redo;
 
-                                }
-                            }
+                    //            }
+                    //        }
 
-                        }
-                    }
-                    else
-                    {
-                        fixed (byte* sDataB = &colorFrame[colorFramePointerStart])
-                        fixed (byte* sDataE = &colorFrame[colorFramePointerEnd])
-                        {
-                            byte* pData = (byte*)camData;
-                            byte* sData = (byte*)sDataE;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    fixed (byte* sDataB = &colorFrame[colorFramePointerStart])
+                    //    fixed (byte* sDataE = &colorFrame[colorFramePointerEnd])
+                    //    {
+                    //        byte* pData = (byte*)camData;
+                    //        byte* sData = (byte*)sDataE;
 
-                            var sDataBE = sData;
-                            var p = sData;
-                            var r = sData;
-                            bool redo = true;
+                    //        var sDataBE = sData;
+                    //        var p = sData;
+                    //        var r = sData;
+                    //        bool redo = true;
 
-                            while (sData == (sDataBE = sData) &&
-                                   sDataB <= (sData -= (width * 4 - 1)))
-                            {
+                    //        while (sData == (sDataBE = sData) &&
+                    //               sDataB <= (sData -= (width * 4 - 1)))
+                    //        {
 
-                                r = sData;
-                                do
-                                {
-                                    p = sData;
-                                    *pData++ = *p++;
-                                    *pData++ = *p++;
-                                    *pData++ = *p++;
-                                    if (zoom)
-                                    {
-                                        p = sData;
-                                        *pData++ = *p++;
-                                        *pData++ = *p++;
-                                        *pData++ = *p++;
-                                    }
+                    //            r = sData;
+                    //            do
+                    //            {
+                    //                p = sData;
+                    //                *pData++ = *p++;
+                    //                *pData++ = *p++;
+                    //                *pData++ = *p++;
+                    //                if (zoom)
+                    //                {
+                    //                    p = sData;
+                    //                    *pData++ = *p++;
+                    //                    *pData++ = *p++;
+                    //                    *pData++ = *p++;
+                    //                }
 
-                                }
-                                while ((sData += 4) <= sDataBE);
-                                sData = r - 1;
-                                if (zoom)
-                                {
-                                    if (redo)
-                                    {
-                                        sData += width * 4;
-                                    }
-                                    else
-                                    {
-                                        sData -= (SensorWidth - ZoomedWidth) * 4;
-                                    }
-                                    redo = !redo;
+                    //            }
+                    //            while ((sData += 4) <= sDataBE);
+                    //            sData = r - 1;
+                    //            if (zoom)
+                    //            {
+                    //                if (redo)
+                    //                {
+                    //                    sData += width * 4;
+                    //                }
+                    //                else
+                    //                {
+                    //                    sData -= (SensorWidth - ZoomedWidth) * 4;
+                    //                }
+                    //                redo = !redo;
 
-                                }
-                            }
-                        }
-                    }
+                    //            }
+                    //        }
+                    //    }
+                    //}
                 }
             }
             catch
             {
-                byte* pData = (byte*)camData;
+                byte* pData2 = (byte*)camData;
                 for (int i = 0; i < length; ++i)
-                    *pData++ = 0;
+                    *pData2++ = 0;
             }
         }
     }
